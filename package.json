@@ -1,0 +1,15 @@
+{
+  "name": "lancesproductions.com",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site de LANCES Productions, une page, fichiers statiques servis par Cloudflare Workers.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "html-validate public/*.html"
+  },
+  "devDependencies": {
+    "html-validate": "^9.7.1",
+    "wrangler": "^4.0.0"
+  }
+}

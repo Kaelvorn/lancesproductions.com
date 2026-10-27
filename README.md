@@ -13,7 +13,6 @@ public/                     ce qui est servi, tel quel
   confidentialite.html      /confidentialite
   404.html                  page introuvable
   _headers                  en-têtes de sécurité (CSP, HSTS…) appliqués par Cloudflare
-  _redirects                www → domaine nu
   robots.txt, sitemap.xml, favicon.svg, favicon.png, apple-touch-icon.png, og.png
   assets/css/site.css       styles (polices locales déclarées en tête)
   assets/js/site.js         script : liens de sortie, symbole, animations, calcul des prix
@@ -43,6 +42,8 @@ npm run check      # validation HTML
 ## Mise en ligne
 
 Le Worker `lancesproductions` est relié à ce dépôt par Cloudflare Workers Builds : **chaque push sur `main` est déployé** (environ une minute). Sans ce lien, à la main : `npm run deploy` (connexion Cloudflare demandée la première fois).
+
+La redirection `www` → domaine nu n'est pas dans le dépôt : les fichiers statiques des Workers n'acceptent que des adresses relatives dans `_redirects` (erreur 100324 au premier déploiement, 27/10/2026). Elle est réglée dans Cloudflare : Rules → Redirect Rules, modèle « Redirect from WWW to root » (301, chemin et paramètres gardés).
 
 Vérifications après chaque mise en ligne : la page, `/mentions-legales`, `/confidentialite`, une adresse inexistante (404), `www.` redirigé, et les en-têtes sur https://securityheaders.com.
 

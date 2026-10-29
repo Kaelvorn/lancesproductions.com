@@ -10,8 +10,8 @@
    ========================================================= */
 const LIENS = {
   instagram: 'https://www.instagram.com/lancesproductions/',
-  tiktok: 'https://www.tiktok.com/@lancesproductions',
-  youtube: 'https://www.youtube.com/@lancesproductions',
+  tiktok: 'https://www.tiktok.com/@lances.productions',
+  youtube: 'https://www.youtube.com/@LANCES-Productions',
   email: 'kevinmazin.pro@gmail.com',
   telephone: '+33698591995',
   /* Page de réservation Google Agenda (appel de 20 min). Vide : les boutons

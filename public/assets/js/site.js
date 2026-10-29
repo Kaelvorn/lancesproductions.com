@@ -52,16 +52,14 @@ if (!pointeurFin) document.documentElement.classList.add('tactile');
 function lienMail(sujet, corps) {
   return `mailto:${LIENS.email}?subject=${encodeURIComponent(sujet)}` + (corps ? `&body=${encodeURIComponent(corps)}` : '');
 }
-const MAIL_RDV = lienMail('Appel de 20 min · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMes disponibilités pour un appel de 20 min : [deux créneaux].\nMon compte Instagram ou mon site : [lien].\n\nMerci.');
-const MAIL_PROJET = lienMail('Projet sur mesure · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMon projet : [vidéo YouTube, événement, film de marque…].\nL\'objectif de la vidéo : [ce qu\'elle doit produire].\nOù elle sera diffusée : [YouTube, Instagram, site, publicité…].\nNiveau de finition attendu : [simple ou soigné].\nFormat et durée : [vertical ou horizontal, durée].\nCe que je fais moi-même : [matériel, montage, rien].\nMon budget : [fourchette].\nDate et lieu : [quand, où].\n\nMerci.');
+const MAIL_RDV = lienMail('Appel de 30 min · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\nMon compte Instagram ou mon site : [lien].\n\nMerci.');
 function externe(a) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
 function poseLiens() {
   $$('[data-lien]').forEach(a => {
     const k = a.dataset.lien;
     if (k === 'rdv') {
       if (LIENS.rdv) { a.href = LIENS.rdv; externe(a); } else { a.href = MAIL_RDV; }
-    } else if (k === 'projet') { a.href = MAIL_PROJET; }
-    else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
+    } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
     else if (k === 'telephone') { a.href = `tel:${LIENS.telephone}`; }
     else if (LIENS[k]) { a.href = LIENS[k]; externe(a); }
   });
@@ -170,7 +168,7 @@ const ANGLE = Math.atan2(-156.57, 339.43);
 class Champ {
   constructor(canvas, o) {
     this.c = canvas; this.ctx = canvas.getContext('2d');
-    this.o = Object.assign({ couleurs: [[226, 232, 238], [240, 86, 42], [255, 197, 61]], poids: [.8, .95], densite: 1, source: null, force: 1 }, o);
+    this.o = Object.assign({ couleurs: [[226, 232, 238], [240, 86, 42], [255, 197, 61]], poids: [.8, .95], densite: 1, source: null, force: 1, lueur: '242,235,221', lueurA: .07 }, o);
     this.d = { x: Math.cos(ANGLE), y: Math.sin(ANGLE) };
     this.ptr = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4, k: 0, actif: 0 };
     this.traits = []; this.vu = true; this.elanV = 1; this.raf = 0;
@@ -239,7 +237,7 @@ class Champ {
     }
     if (ptr.k > .01) {
       const g = ctx.createRadialGradient(ptr.x, ptr.y, 0, ptr.x, ptr.y, 320);
-      g.addColorStop(0, `rgba(242,235,221,${.07 * ptr.k})`); g.addColorStop(1, 'rgba(242,235,221,0)');
+      g.addColorStop(0, `rgba(${this.o.lueur},${this.o.lueurA * ptr.k})`); g.addColorStop(1, `rgba(${this.o.lueur},0)`);
       ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
     }
     ctx.globalCompositeOperation = 'lighter';
@@ -268,7 +266,7 @@ const sourceHero = rc => {
   const r = svg.getBoundingClientRect();
   return { x: r.left - rc.left + (380 / 400) * r.width, y: r.top - rc.top + ((111.43 - 86) / 224) * r.height, r: Math.max(rc.width, rc.height) * .5, c: '240,86,42', a: .13 };
 };
-const champHero = $('#champ-hero') ? new Champ($('#champ-hero'), { source: sourceHero }) : null;
+const champHero = $('#champ-hero') ? new Champ($('#champ-hero'), { source: sourceHero, lueur: '110,146,166', lueurA: .09 }) : null;
 if (champHero && !reduit) setTimeout(() => champHero.elan(5.5), 1150);
 const champFin = $('#champ-fin') ? new Champ($('#champ-fin'), { couleurs: [[242, 235, 221], [255, 255, 255], [167, 179, 191]], poids: [.62, .82], densite: .8, force: .8, source: rc => ({ x: rc.width / 2, y: rc.height * .22, r: rc.width * .45, c: '242,235,221', a: .06 }) }) : null;
 
@@ -282,28 +280,39 @@ if (scene && pointeurFin && !reduit) {
   $('.hero').addEventListener('pointerleave', () => { incl.tx = 0; incl.ty = 0; });
 }
 
+/* Projecteur pétrole : part du haut, s'incline vers le pointeur (héros seulement) */
+const proj = $('#projecteur'), hero = $('.hero');
+const PROJ_REPOS = { ox: .74, ix: .62, iy: .48, k: .55 };
+const pj = Object.assign({}, PROJ_REPOS), pjCible = Object.assign({}, PROJ_REPOS);
+let heroVu = true, heroW = 1, heroH = 1;
+if (proj && hero && pointeurFin && !reduit) {
+  new IntersectionObserver(e => { heroVu = e[0].isIntersecting; }).observe(hero);
+  new ResizeObserver(e => { heroW = e[0].contentRect.width || 1; heroH = e[0].contentRect.height || 1; }).observe(hero);
+  hero.addEventListener('pointermove', e => {
+    const r = hero.getBoundingClientRect();
+    const mx = borne((e.clientX - r.left) / r.width, 0, 1), my = borne((e.clientY - r.top) / r.height, 0, 1);
+    Object.assign(pjCible, { ix: mx, iy: my, ox: PROJ_REPOS.ox + (mx - PROJ_REPOS.ix) * .25, k: .95 });
+  }, { passive: true });
+  hero.addEventListener('pointerleave', () => Object.assign(pjCible, PROJ_REPOS));
+}
+function majProjecteur() {
+  if (!proj || !pointeurFin || reduit || !heroVu) return;
+  Object.keys(pj).forEach(c => { pj[c] = vers(pj[c], pjCible[c], .08); });
+  const ang = borne(-Math.atan2((pj.ix - pj.ox) * heroW, pj.iy * heroH + 40) * 180 / Math.PI, -45, 45);
+  proj.style.setProperty('--ox', (pj.ox * 100).toFixed(2) + '%');
+  proj.style.setProperty('--ix', (pj.ix * 100).toFixed(2) + '%');
+  proj.style.setProperty('--iy', (pj.iy * 100).toFixed(2) + '%');
+  proj.style.setProperty('--ang', ang.toFixed(2) + 'deg');
+  proj.style.setProperty('--k', pj.k.toFixed(3));
+}
+
 /* =========================================================
-   5. Viseur : timecode et journal de tournage
+   5. Viseur : timecode
    ========================================================= */
 const tc = $('#timecode');
 const debut = performance.now();
 const formatTc = s => { const f = Math.floor((s % 1) * 25), t = Math.floor(s); return `${deux(Math.floor(t / 3600))}:${deux(Math.floor(t / 60) % 60)}:${deux(t % 60)}:${deux(f)}`; };
 if (tc && !reduit) setInterval(() => { if (!document.hidden) tc.textContent = formatTc((performance.now() - debut) / 1000); }, 40);
-
-const journal = $('#journal');
-if (journal && !reduit && getComputedStyle(journal).display !== 'none') {
-  const lignes = $$('span', journal); const textes = lignes.map(l => l.textContent);
-  lignes.forEach(l => { l.textContent = ' '; });
-  let i = 0, j = 0;
-  const tape = () => {
-    if (i >= lignes.length) { lignes[lignes.length - 1].classList.add('curseur'); return; }
-    lignes.forEach(l => l.classList.remove('curseur'));
-    lignes[i].classList.add('curseur');
-    lignes[i].textContent = textes[i].slice(0, ++j) || ' ';
-    if (j >= textes[i].length) { i++; j = 0; setTimeout(tape, 260); } else setTimeout(tape, 22 + Math.random() * 26);
-  };
-  setTimeout(tape, 1700);
-}
 
 /* =========================================================
    6. En-tête, menu mobile, progression, lien actif
@@ -328,7 +337,9 @@ document.addEventListener('click', e => {
   if (!cible) return;
   e.preventDefault();
   if (menu && !menu.hidden) ouvrirMenu(false);
-  cible.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' });
+  let vise = cible;
+  if (cible.matches('[role="tabpanel"]')) { ouvrePanneau(cible); vise = $('.onglets') || cible; }
+  vise.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' });
   history.replaceState(null, '', id);
 });
 
@@ -462,6 +473,20 @@ if (onde) {
     onde.appendChild(b); barresOnde.push(b);
   }
 }
+/* Le moniteur montre l'étape en cours : ce que je fais par défaut, ce qu'on peut faire ensemble */
+const moniteur = {
+  corps: $('#mon-corps'), n: $('#mon-n'), meta: $('#mon-meta'),
+  titre: $('#mon-titre'), defaut: $('#mon-defaut'), ensemble: $('#mon-ensemble')
+};
+function majMoniteur(etape, idx) {
+  if (!moniteur.corps || !etape) return;
+  moniteur.n.textContent = deux(idx + 1);
+  moniteur.meta.textContent = $('.etape-meta', etape).textContent;
+  moniteur.titre.textContent = $('h3', etape).textContent;
+  moniteur.defaut.textContent = etape.dataset.defaut || '';
+  moniteur.ensemble.textContent = etape.dataset.ensemble || '';
+  if (!reduit) { moniteur.corps.classList.remove('change'); void moniteur.corps.offsetWidth; moniteur.corps.classList.add('change'); }
+}
 function majMontage(rects) {
   if (!montage || !etapes.length || !rects) return;
   const ligne = innerHeight * .5;
@@ -478,6 +503,7 @@ function majMontage(rects) {
     etapes.forEach((e, i) => e.classList.toggle('actif', i === idx));
     clipsV1.forEach((c, i) => c.classList.toggle('actif', i === idx));
     if (metape) metape.textContent = `Étape ${idx + 1} sur 6 · ${NOMS[idx]}`;
+    majMoniteur(etapes[idx], idx);
   }
   clipsV2.forEach(c => { const de = +c.dataset.de / 6, a = +c.dataset.a / 6; c.classList.toggle('actif', pMontage >= de && pMontage < a); });
   const nb = Math.floor(pMontage * barresOnde.length);
@@ -549,7 +575,7 @@ placeIndic();
 addEventListener('resize', placeIndic);
 if (document.fonts) document.fonts.ready.then(placeIndic);
 
-const PRIX = { courte: 120, pub: 150, presentation: 250 }, SEANCE = 190;
+const PRIX = { courte: 120, pub: 150, presentation: 250 }, SEANCE = 190, PACKS = { 4: 480, 6: 690, 8: 890 };
 const NOMS_ARTICLES = { courte: 'vidéo courte', pub: 'publicité', presentation: 'vidéo de présentation' };
 const qte = { courte: 0, pub: 1, presentation: 1 };
 const totalEl = $('#total'), acompteEl = $('#acompte'), noteEl = $('#calcul-note'), devisEl = $('#demande-devis');
@@ -569,7 +595,7 @@ function calcule() {
   if (n === 0) note = 'Ajoutez au moins une vidéo.';
   const nv = Math.max(n, courtes + qte.pub + qte.presentation);
   if (!note && qte.presentation === 0 && qte.pub <= 1 && nv >= 4 && nv <= 8) {
-    const pack = nv <= 4 ? 4 : nv <= 6 ? 6 : 8, prix = { 4: 480, 6: 690, 8: 890 }[pack];
+    const pack = nv <= 4 ? 4 : nv <= 6 ? 6 : 8, prix = PACKS[pack];
     if (prix < total) note = `Le même volume chaque mois&#8239;: <b>pack ${pack} à ${prix}&nbsp;€</b>, séance offerte.`;
   }
   tween(totalEl, totalAffiche, total); totalAffiche = total;
@@ -583,7 +609,7 @@ function calcule() {
   });
   if (devisEl) {
     const lignes = Object.keys(qte).filter(k => (k === 'courte' ? courtes : qte[k]) > 0).map(k => `- ${k === 'courte' ? courtes : qte[k]} × ${NOMS_ARTICLES[k]}`);
-    const corps = `Bonjour Kevin,\n\nJe souhaite un devis à l'occasion :\n- 1 séance de tournage (190 €)\n${lignes.join('\n')}\nTotal indiqué sur le site : ${nombre(total)} €.\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 20 min : [deux créneaux].\n\nMerci.`;
+    const corps = `Bonjour Kevin,\n\nJe souhaite un devis à l'occasion :\n- 1 séance de tournage (190 €)\n${lignes.join('\n')}\nTotal indiqué sur le site : ${nombre(total)} €.\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\n\nMerci.`;
     devisEl.href = lienMail('Demande de devis · LANCES Productions', corps);
   }
 }
@@ -592,14 +618,181 @@ $$('.ligne-calcul').forEach(l => {
   $('[data-moins]', l).addEventListener('click', () => { qte[k] = Math.max(0, qte[k] - 1); calcule(); });
   $('[data-plus]', l).addEventListener('click', () => { qte[k] = Math.min(8, qte[k] + 1); calcule(); });
 });
-$$('[data-exemple]').forEach(b => b.addEventListener('click', () => {
-  const [c, p, r] = b.dataset.exemple.split(',').map(Number);
-  qte.courte = c; qte.pub = p; qte.presentation = r; calcule();
-}));
 calcule();
 
+/* Devis types : l'e-mail pré-rempli reprend la carte */
+$$('[data-devis-mail]').forEach(a => {
+  const carte = a.closest('.devis');
+  const compo = $$('.devis-compo li', carte).map(li => `- ${li.textContent.replace(/\u202f/g, ' ')}`).join('\n');
+  const corps = `Bonjour Kevin,\n\nJe souhaite ce devis : ${$('h4', carte).textContent}\n${compo}\nPrix indiqué sur le site : ${$('.devis-prix', carte).dataset.prixTexte}.\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\n\nMerci.`;
+  a.href = lienMail(`Devis : ${$('h4', carte).textContent} · LANCES Productions`, corps);
+});
+
+/* Un lien vers un panneau (#sur-mesure) ouvre son onglet */
+function ouvrePanneau(panneau) {
+  const o = onglets.find(x => x.getAttribute('aria-controls') === panneau.id);
+  if (o) choisit(o);
+}
+if (location.hash === '#sur-mesure' && $('#sur-mesure')) ouvrePanneau($('#sur-mesure'));
+
 /* =========================================================
-   13. Tarif de lancement : compte à rebours et places (vérité datée)
+   12 bis. Sur mesure : l'assistant (questions, proposition, date, envoi)
+   Rien ne quitte l'appareil avant que le visiteur envoie son e-mail.
+   ========================================================= */
+const assistant = $('#assistant'), formQ = $('#questionnaire');
+if (assistant && formQ) {
+  const ecrans = $$('[data-ecran]', assistant);
+  const PARCOURS = {
+    estimation: ['choix', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'proposition', 'date', 'envoi'],
+    contact: ['choix', 'date', 'q6', 'envoi']
+  };
+  const AUTO = ['q1', 'q2', 'q4', 'q5'];
+  let parcours = 'estimation', courant = 'choix', prop = null, ajuste = false;
+  const coche = n => $(`input[name="${n}"]:checked`, formQ);
+  const val = n => { const i = coche(n); return i ? i.value : ''; };
+  const lib = n => { const i = coche(n); return i ? i.nextElementSibling.textContent.replace(/ /g, ' ') : ''; };
+  const champ = n => (formQ.elements[n] ? formQ.elements[n].value.trim() : '');
+  const euros = n => `${nombre(n)} €`;
+  const jour = formQ.elements.jour;
+  const iso = d => `${d.getFullYear()}-${deux(d.getMonth() + 1)}-${deux(d.getDate())}`;
+  const demain = () => { const d = new Date(); d.setDate(d.getDate() + 1); return iso(d); };
+  if (jour) jour.min = demain();
+  if (LIENS.rdv) $$('.agenda', assistant).forEach(p => { p.hidden = false; });
+
+  function piloteOuvert() { return Date.now() < Date.parse(PILOTE.fin) && PILOTE.placesRestantes > 0; }
+
+  /* La formule proposée : la grille de prix, jamais un prix inventé */
+  function propose() {
+    const profil = val('profil'), stade = val('stade'), prio = val('priorite'), rythme = val('rythme');
+    const besoin = champ('besoin').toLowerCase();
+    const horsGrille = profil === 'autre' || /youtube|[ée]v[ée]nement|comp[ée]tition|tournoi|gala|course|marathon|trail|mariage|film|documentaire|clip|aftermovie|s[ée]minaire|podcast/.test(besoin);
+    const salle = profil === 'salle' || prio === 'salle';
+    const fixe = (montant, suite) => ({ html: `<b>${euros(montant)}</b>${suite || ''}`, texte: `${euros(montant)}${suite || ''}` });
+    let r;
+    if (horsGrille) r = { pour: 'Projet sur mesure', titre: 'Production sur mesure', compo: ['Écriture, tournage et montage adaptés à votre projet', 'Format, durée et finition fixés ensemble à l’appel'], prix: { html: '<b>Sur devis</b> sous 48 h après l’appel', texte: 'sur devis, sous 48 h après l’appel' } };
+    else if (prio === 'images') r = { pour: 'Vous montez vous-même', titre: 'Le tournage seul', compo: ['Une séance de tournage avec le matériel', 'Vos rushs triés, prêts à monter'], prix: { html: '<b>Sur devis</b> après l’appel', texte: 'sur devis après l’appel' } };
+    else if (rythme === 'mensuel') {
+      if (salle) r = { pour: 'Salle ou studio, chaque mois', titre: 'Pack 8', compo: ['8 vidéos par mois : coachs, cours, ambiance', 'Une séance de tournage par mois, offerte', 'En option : la présentation de vos coachs'], prix: fixe(PACKS[8], ' par mois') };
+      else if (prio === 'prospects' || (prio === 'regulier' && stade !== 'lance')) r = { pour: prio === 'prospects' ? 'Attirer plus de prospects' : 'Publier sans y passer du temps', titre: 'Pack 6', compo: ['6 vidéos par mois, séance offerte', 'Une vidéo par mois montée en publicité', 'Le plan de contenu et un bilan en trois chiffres'], prix: fixe(PACKS[6], ' par mois') };
+      else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Pack 4 + présentation', compo: ['4 vidéos par mois, séance offerte', 'Une vidéo de présentation en plus le premier mois'], prix: fixe(PACKS[4] + PRIX.presentation, ` le premier mois, puis ${euros(PACKS[4])} par mois`), pack4: true };
+      else r = { pour: stade === 'lance' ? 'Pour lancer votre activité' : 'Une vidéo par semaine', titre: 'Pack 4', compo: ['4 vidéos par mois, séance offerte', 'Les idées et les textes de chaque vidéo', 'Une vidéo par mois peut devenir une publicité'], prix: fixe(PACKS[4], ' par mois'), pack4: true };
+    } else {
+      if (salle) r = { pour: 'Montrer votre salle', titre: 'Présentation + 3 vidéos courtes', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle', '3 vidéos courtes : coachs, cours, ambiance'], prix: fixe(SEANCE + PRIX.presentation + 3 * PRIX.courte) };
+      else if (prio === 'prospects') r = { pour: 'Attirer plus de prospects', titre: 'Deux publicités', compo: ['La séance de tournage', '2 publicités prêtes pour Meta, 2 accroches chacune'], prix: fixe(SEANCE + 2 * PRIX.pub) };
+      else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Vidéo de présentation', compo: ['La séance de tournage', 'Une vidéo de présentation de 2 min', 'Pour votre page de rendez-vous, votre bio, votre épinglé'], prix: fixe(SEANCE + PRIX.presentation) };
+      else if (prio === 'regulier') r = { pour: 'Du contenu d’avance', titre: 'Trois vidéos courtes', compo: ['La séance de tournage', '3 vidéos courtes : reels, témoignages, coulisses'], prix: fixe(SEANCE + 3 * PRIX.courte), note: `Pour publier chaque semaine, le pack 4 revient moins cher : ${euros(PACKS[4])} par mois, séance offerte.` };
+      else r = { pour: 'Se présenter et se faire connaître', titre: 'Présentation + publicité', compo: ['La séance de tournage', 'Une vidéo de présentation', 'Une publicité, 2 accroches'], prix: fixe(SEANCE + PRIX.presentation + PRIX.pub) };
+    }
+    if (!r.note && piloteOuvert() && r.pack4 && stade === 'lance') r.note = 'Offre de fin d’année : le premier mois du pack 4 à 384 € au lieu de 480 €, sans engagement, pour un contrat signé au plus tard le 23 novembre.';
+    if (!r.note && piloteOuvert() && r.titre === 'Pack 8') r.note = 'Offre de fin d’année : le premier mois sans engagement, pour un contrat signé au plus tard le 23 novembre.';
+    if (!r.note && prio === 'sais_pas') r.note = 'Vous hésitez encore : on affine la formule ensemble pendant l’appel.';
+    return r;
+  }
+  function afficheProposition() {
+    prop = propose();
+    $('#prop-pour').textContent = prop.pour;
+    $('#prop-titre').textContent = prop.titre;
+    const ul = $('#prop-compo'); ul.textContent = '';
+    prop.compo.forEach(c => { const li = document.createElement('li'); li.textContent = c; ul.appendChild(li); });
+    $('#prop-prix').innerHTML = prop.prix.html;
+    const note = $('#prop-note'); note.hidden = !prop.note; note.textContent = prop.note || '';
+    $('.ajuster', assistant).hidden = true; ajuste = false;
+  }
+
+  /* Validation de l'écran en cours */
+  function erreur(ec, msg, champFautif) {
+    const e = $('.q-erreur', ec); e.textContent = msg; e.hidden = false;
+    if (champFautif) { champFautif.setAttribute('aria-invalid', 'true'); champFautif.focus(); }
+    return false;
+  }
+  function valide(id) {
+    const ec = ecrans.find(e => e.dataset.ecran === id);
+    $$('[aria-invalid]', ec).forEach(c => c.removeAttribute('aria-invalid'));
+    if (AUTO.includes(id)) { const n = $('input[type="radio"]', ec).name; return coche(n) ? true : erreur(ec, 'Choisissez une réponse.'); }
+    if (id === 'q6') {
+      const f = formQ.elements;
+      if (!champ('prenom')) return erreur(ec, 'Indiquez votre prénom.', f.prenom);
+      if (!champ('email') && !champ('tel')) return erreur(ec, 'Indiquez un e-mail ou un téléphone.', f.email);
+      if (champ('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(champ('email'))) return erreur(ec, 'Cet e-mail semble incomplet.', f.email);
+      if (champ('tel') && champ('tel').replace(/\D/g, '').length < 9) return erreur(ec, 'Ce numéro semble incomplet.', f.tel);
+    }
+    if (id === 'date') {
+      if (!jour.value || jour.value < demain()) return erreur(ec, 'Choisissez un jour à partir de demain.', jour);
+      if (!coche('creneau')) return erreur(ec, 'Choisissez un créneau.');
+      if (!coche('moyen')) return erreur(ec, 'Téléphone ou visio ?');
+    }
+    return true;
+  }
+
+  /* Navigation entre les écrans */
+  function montre(id, focus = true) {
+    courant = id;
+    assistant.classList.toggle('mode-contact', parcours === 'contact');
+    if (id === 'proposition') afficheProposition();
+    if (id === 'envoi') prepareEnvoi();
+    let actif = null;
+    ecrans.forEach(e => {
+      const on = e.dataset.ecran === id;
+      e.hidden = !on;
+      if (on) { actif = e; $$('.q-erreur', e).forEach(x => { x.hidden = true; }); if (!reduit) { e.classList.remove('arrive'); void e.offsetWidth; e.classList.add('arrive'); } }
+    });
+    if (!focus || !actif) return;
+    const t = $('[tabindex="-1"]', actif); if (t) t.focus({ preventScroll: true });
+    const r = assistant.getBoundingClientRect();
+    if (r.top < 0 || r.top > innerHeight * .7) assistant.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' });
+  }
+  const etape = d => { const p = PARCOURS[parcours], i = p.indexOf(courant); if (p[i + d]) montre(p[i + d]); };
+
+  formQ.addEventListener('submit', e => { e.preventDefault(); if (valide(courant)) etape(1); });
+  formQ.addEventListener('change', e => {
+    const n = e.target.name;
+    if (e.target.type === 'radio' && AUTO.includes(courant) && $(`[data-ecran="${courant}"] input[name="${n}"]`, assistant)) { const ici = courant; setTimeout(() => { if (courant === ici && valide(ici)) etape(1); }, reduit ? 0 : 280); }
+  });
+  formQ.addEventListener('input', e => { e.target.removeAttribute('aria-invalid'); });
+  assistant.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.commence) { parcours = b.dataset.commence; montre(PARCOURS[parcours][1]); }
+    else if (b.hasAttribute('data-retour')) etape(-1);
+    else if (b.hasAttribute('data-remplit')) { const t = formQ.elements.besoin; t.value = b.textContent; t.focus(); }
+    else if (b.hasAttribute('data-ajuster')) { $('.ajuster', assistant).hidden = false; formQ.elements.remarque.focus(); }
+    else if (b.hasAttribute('data-modifie')) montre('q1');
+    else if (b.hasAttribute('data-confirme')) { ajuste = !!b.closest('.ajuster'); montre('date'); }
+    else if (b.hasAttribute('data-recommence')) { formQ.reset(); parcours = 'estimation'; prop = null; $('.envoye', assistant).hidden = true; montre('choix'); }
+  });
+
+  /* Le récapitulatif et l'e-mail */
+  function lignes() {
+    const l = [];
+    if (parcours === 'estimation') {
+      l.push(['Profil', lib('profil')], ['Où j’en suis', lib('stade')], ['Besoin', champ('besoin') || '—'], ['Priorité', lib('priorite')], ['Rythme', lib('rythme')]);
+      if (prop) l.push(['Formule proposée', `${prop.titre} · ${prop.prix.texte}${ajuste ? ' (à ajuster)' : ''}`]);
+      if (ajuste && champ('remarque')) l.push(['Remarque', champ('remarque')]);
+    }
+    const d = jour.value ? new Date(`${jour.value}T12:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+    l.push(['Appel de 30 min', `${d} · ${lib('creneau')} · ${lib('moyen')}`]);
+    l.push(['Prénom', champ('prenom')]);
+    if (champ('email')) l.push(['E-mail', champ('email')]);
+    if (champ('tel')) l.push(['Téléphone', champ('tel')]);
+    if (champ('instagram')) l.push(['Instagram', champ('instagram')]);
+    return l;
+  }
+  function prepareEnvoi() {
+    const l = lignes(), dl = $('#recap');
+    dl.textContent = '';
+    l.forEach(([k, v]) => { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); });
+    const intro = parcours === 'estimation' ? 'Voici mon estimation faite sur le site.' : 'Je souhaite être contacté.';
+    const corps = `Bonjour Kevin,\n\n${intro}\n\n${l.map(([k, v]) => `${k} : ${v}`).join('\n')}\n\nMerci.`;
+    const sujet = `${parcours === 'estimation' ? 'Demande sur mesure' : 'Demande d’appel'} · ${champ('prenom')} · LANCES Productions`;
+    $('#envoi-demande').href = lienMail(sujet, corps);
+  }
+  $('#envoi-demande').addEventListener('click', () => { setTimeout(() => { $('.envoye', assistant).hidden = false; }, 1200); });
+
+  montre('choix', false);
+}
+
+/* =========================================================
+   13. Offre de fin d’année (tarif de lancement des CGV) : compte à rebours et places (vérité datée)
    ========================================================= */
 const FIN_PILOTE = Date.parse(PILOTE.fin);
 const cases = { j: $('[data-u="j"]'), h: $('[data-u="h"]'), m: $('[data-u="m"]'), s: $('[data-u="s"]') };
@@ -662,15 +855,6 @@ if (clap) {
 }
 
 /* =========================================================
-   15. Engagements : les promesses impossibles sont barrées
-   ========================================================= */
-const jamais = $('#jamais');
-if (jamais && !reduit) {
-  jamais.classList.add('anim');
-  new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { o.disconnect(); jamais.classList.add('vu'); } }, { threshold: .45 }).observe(jamais);
-}
-
-/* =========================================================
    16. Copier
    ========================================================= */
 $$('[data-copie]').forEach(b => b.addEventListener('click', () => {
@@ -728,6 +912,7 @@ function image() {
     if (bandeauX <= -largeurGroupe) bandeauX += largeurGroupe;
     piste.style.transform = `translate3d(${bandeauX.toFixed(2)}px,0,0)`;
   }
+  majProjecteur();
   majEssai(rEssai);
   majMontage(rEtapes);
   requestAnimationFrame(image);

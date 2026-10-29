@@ -577,9 +577,11 @@ if (document.fonts) document.fonts.ready.then(placeIndic);
 
 const PRIX = { courte: 120, pub: 150, presentation: 250 }, SEANCE = 190, PACKS = { 4: 480, 6: 690, 8: 890 };
 const NOMS_ARTICLES = { courte: 'vidéo courte', pub: 'publicité', presentation: 'vidéo de présentation' };
-const qte = { courte: 0, pub: 1, presentation: 1 };
+const qte = { courte: 0, pub: 0, presentation: 0 };
 const totalEl = $('#total'), acompteEl = $('#acompte'), noteEl = $('#calcul-note'), devisEl = $('#demande-devis');
-let totalAffiche = 590;
+const barreEl = $('#calcul-barre'), recapEl = $('#recap-lignes');
+const NOMS_PLURIEL = { courte: 'vidéos courtes', pub: 'publicités', presentation: 'vidéos de présentation' };
+let totalAffiche = 0;
 function tween(el, de, a) {
   if (reduit) { el.textContent = nombre(a); return; }
   const dep = performance.now();
@@ -592,7 +594,6 @@ function calcule() {
   let courtes = qte.courte, note = '';
   if (qte.pub === 0 && qte.presentation === 0 && courtes > 0 && courtes < 3) { courtes = 3; note = 'Les vidéos courtes seules se commandent par <b>3 au minimum</b>&#8239;: le total en compte 3.'; }
   const total = n === 0 ? 0 : SEANCE + courtes * PRIX.courte + qte.pub * PRIX.pub + qte.presentation * PRIX.presentation;
-  if (n === 0) note = 'Ajoutez au moins une vidéo.';
   const nv = Math.max(n, courtes + qte.pub + qte.presentation);
   if (!note && qte.presentation === 0 && qte.pub <= 1 && nv >= 4 && nv <= 8) {
     const pack = nv <= 4 ? 4 : nv <= 6 ? 6 : 8, prix = PACKS[pack];
@@ -601,6 +602,16 @@ function calcule() {
   tween(totalEl, totalAffiche, total); totalAffiche = total;
   acompteEl.textContent = nombre(total / 2);
   noteEl.innerHTML = note;
+  /* Le détail du devis : chaque ligne explique le total */
+  if (barreEl) barreEl.classList.toggle('vide', n === 0);
+  if (recapEl) {
+    recapEl.textContent = '';
+    if (n > 0) {
+      const ligne = (lib, montant) => { const li = document.createElement('li'); const a = document.createElement('span'), b = document.createElement('span'); a.textContent = lib; b.textContent = `${nombre(montant)} €`; li.append(a, b); recapEl.appendChild(li); };
+      ligne('La séance de tournage', SEANCE);
+      Object.keys(qte).forEach(k => { const q = k === 'courte' ? courtes : qte[k]; if (q > 0) ligne(`${q} ${q > 1 ? NOMS_PLURIEL[k] : NOMS_ARTICLES[k]} × ${PRIX[k]} €`, q * PRIX[k]); });
+    }
+  }
   Object.keys(qte).forEach(k => {
     const ligne = $(`.ligne-calcul[data-type="${k}"]`);
     $('output', ligne).textContent = qte[k];

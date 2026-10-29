@@ -331,7 +331,7 @@
             <p class="hud">Toujours en premier</p>
             <h3>La séance de tournage</h3>
             <p class="prix"><span class="montant">190</span><span class="devise">€</span></p>
-            <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: environ cinq heures et demie de travail pour vous&#8239;: l’appel, l’écriture, le trajet et jusqu’à trois heures de tournage.</p>
+            <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: environ six heures de travail pour vous&#8239;: l’appel, l’écriture, le trajet et jusqu’à trois heures de tournage.</p>
           </div>
           <div class="seance-temps">
             <h4>Avant la séance</h4>
@@ -367,7 +367,7 @@
             <dl class="article-meta"><div><dt>Durée</dt><dd>jusqu’à 60&nbsp;s</dd></div><div><dt>Format</dt><dd>vertical 9:16</dd></div><div><dt>Versions</dt><dd>2 accroches</dd></div></dl>
             <ul class="liste-coche"><li>Deux versions montées, une par accroche&#8239;: vous gardez la meilleure</li><li>Sous-titres et musique sous licence</li><li>Un appel à l’action pensé pour la publicité</li><li>Deux séries de retouches</li></ul>
             <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: deux versions montées et un texte écrit pour vendre.</p>
-            <div class="ligne-calcul" data-type="pub"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une publicité">−</button><output id="n-pub" aria-live="polite">1</output><button type="button" data-plus aria-label="Ajouter une publicité">+</button></div></div>
+            <div class="ligne-calcul" data-type="pub"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une publicité">−</button><output id="n-pub" aria-live="polite">0</output><button type="button" data-plus aria-label="Ajouter une publicité">+</button></div></div>
           </article>
           <article class="article ecran" data-lumiere>
             <div class="article-tete"><h3>Vidéo de présentation</h3><p class="prix"><span class="montant">250</span><span class="devise">€</span></p></div>
@@ -375,50 +375,23 @@
             <dl class="article-meta"><div><dt>Durée</dt><dd>2&nbsp;min</dd></div><div><dt>Format</dt><dd>vertical 9:16</dd></div><div><dt>Structure</dt><dd>4 temps</dd></div></dl>
             <ul class="liste-coche"><li>Qui vous êtes, votre méthode, pour qui, comment prendre rendez-vous</li><li>Plusieurs plans et prises montés en un récit</li><li>Sous-titres et musique sous licence</li><li>Deux séries de retouches</li></ul>
             <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: deux minutes à écrire, à structurer et à monter&#8239;: la vidéo la plus travaillée.</p>
-            <div class="ligne-calcul" data-type="presentation"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une vidéo de présentation">−</button><output id="n-presentation" aria-live="polite">1</output><button type="button" data-plus aria-label="Ajouter une vidéo de présentation">+</button></div></div>
+            <div class="ligne-calcul" data-type="presentation"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une vidéo de présentation">−</button><output id="n-presentation" aria-live="polite">0</output><button type="button" data-plus aria-label="Ajouter une vidéo de présentation">+</button></div></div>
           </article>
         </div>
-        <div class="calcul-barre ecran" data-lumiere>
-          <div class="total"><span>Votre devis, séance comprise</span><p class="prix"><span class="montant" id="total">590</span><span class="devise">€</span></p></div>
-          <p class="acompte">Acompte de 50&nbsp;% à la signature&#8239;: <span id="acompte">295</span>&nbsp;€, solde à la validation des vidéos</p>
-          <p class="calcul-note" id="calcul-note" aria-live="polite"></p>
-          <div class="actions">
-            <a class="bouton bouton-plein" id="demande-devis" href="#contact">Demander ce devis</a>
-            <a class="bouton bouton-trait" href="#contact" data-lien="rdv">Réserver un appel</a>
+        <div class="calcul-barre ecran vide" id="calcul-barre" data-lumiere>
+          <div class="recap-devis">
+            <p class="hud">Votre devis</p>
+            <p class="recap-vide">Choisissez vos vidéos avec le bouton + de chaque fiche&#8239;: le détail et le total s’affichent ici.</p>
+            <ul class="recap-lignes" id="recap-lignes"></ul>
+            <p class="calcul-note" id="calcul-note" aria-live="polite"></p>
           </div>
-        </div>
-        <ul class="conditions">
-          <li><b>Aperçu</b> sous 7 jours ouvrés après la séance</li>
-          <li><b>Deux séries</b> de retouches par vidéo, sur le montage</li>
-          <li><b>Vidéo refaite</b> une fois si elle ne respecte pas le brief</li>
-          <li><b>Droits de diffusion</b> 5 ans&#8239;: réseaux, site, publicités en ligne</li>
-          <li><b>Rushs</b> gardés 3 mois, remis sur demande</li>
-          <li><b>Vidéos courtes seules</b>&#8239;: 3 au minimum par séance</li>
-        </ul>
-        <div class="devis-types" data-revele>
-          <div class="devis-types-tete"><p class="hud">Devis types</p><p>Des combinaisons prêtes à demander, aux prix de la grille.</p></div>
-          <div class="devis-grille">
-          <article class="devis ecran" data-lumiere>
-            <p class="devis-pour">Pour votre page de rendez-vous</p>
-            <h4>Vidéo de présentation</h4>
-            <ul class="devis-compo"><li>La séance de tournage</li><li>Une vidéo de présentation de 2 min</li></ul>
-            <p class="devis-prix" data-prix-texte="440 €"><b>440&nbsp;€</b></p>
-            <div class="devis-actions"><a class="bouton bouton-plein bouton-petit" href="#contact" data-devis-mail>Demander ce devis</a><a class="bouton bouton-trait bouton-petit" href="#contact" data-lien="rdv">Réserver un appel</a></div>
-          </article>
-          <article class="devis ecran" data-lumiere>
-            <p class="devis-pour">Pour lancer une campagne</p>
-            <h4>Présentation + publicité</h4>
-            <ul class="devis-compo"><li>La séance de tournage</li><li>Une vidéo de présentation</li><li>Une publicité, 2 accroches</li></ul>
-            <p class="devis-prix" data-prix-texte="590 €"><b>590&nbsp;€</b></p>
-            <div class="devis-actions"><a class="bouton bouton-plein bouton-petit" href="#contact" data-devis-mail>Demander ce devis</a><a class="bouton bouton-trait bouton-petit" href="#contact" data-lien="rdv">Réserver un appel</a></div>
-          </article>
-          <article class="devis ecran" data-lumiere>
-            <p class="devis-pour">Pour tester vos publicités</p>
-            <h4>Deux publicités</h4>
-            <ul class="devis-compo"><li>La séance de tournage</li><li>2 publicités, 2 accroches chacune</li></ul>
-            <p class="devis-prix" data-prix-texte="490 €"><b>490&nbsp;€</b></p>
-            <div class="devis-actions"><a class="bouton bouton-plein bouton-petit" href="#contact" data-devis-mail>Demander ce devis</a><a class="bouton bouton-trait bouton-petit" href="#contact" data-lien="rdv">Réserver un appel</a></div>
-          </article>
+          <div class="recap-total">
+            <div class="total"><span>Total</span><p class="prix"><span class="montant" id="total">0</span><span class="devise">€</span></p></div>
+            <p class="acompte">Acompte de 50&nbsp;% à la signature&#8239;: <span id="acompte">0</span>&nbsp;€, solde à la validation des vidéos</p>
+            <div class="actions">
+              <a class="bouton bouton-plein" id="demande-devis" href="#contact">Demander ce devis</a>
+              <a class="bouton bouton-trait" href="#contact" data-lien="rdv">Réserver un appel</a>
+            </div>
           </div>
         </div>
       </div>
@@ -481,32 +454,6 @@
             </table>
           </div>
           <p class="comparatif-pied">Engagement de 3 mois, puis au mois, avec 30 jours de préavis. Payé chaque mois d’avance, par virement. Présentation ou publicité en plus&#8239;: au prix de l’occasion, sans séance.</p>
-        </div>
-        <div class="devis-types" data-revele>
-          <div class="devis-types-tete"><p class="hud">Devis types</p><p>Des combinaisons prêtes à demander, aux prix de la grille.</p></div>
-          <div class="devis-grille">
-          <article class="devis ecran" data-lumiere>
-            <p class="devis-pour">Coach qui se lance</p>
-            <h4>Pack 4 + présentation</h4>
-            <ul class="devis-compo"><li>4 vidéos par mois, séance offerte</li><li>Une vidéo de présentation en plus le premier mois</li></ul>
-            <p class="devis-prix" data-prix-texte="730 € le premier mois, puis 480 € par mois"><b>730&nbsp;€</b> le premier mois, puis 480&nbsp;€ par mois</p>
-            <div class="devis-actions"><a class="bouton bouton-plein bouton-petit" href="#contact" data-devis-mail>Demander ce devis</a><a class="bouton bouton-trait bouton-petit" href="#contact" data-lien="rdv">Réserver un appel</a></div>
-          </article>
-          <article class="devis ecran" data-lumiere>
-            <p class="devis-pour">Coach qui fait de la publicité</p>
-            <h4>Pack 6 + une publicité</h4>
-            <ul class="devis-compo"><li>6 vidéos par mois, dont une en publicité</li><li>Une deuxième publicité chaque mois, 2 accroches</li></ul>
-            <p class="devis-prix" data-prix-texte="840 € par mois"><b>840&nbsp;€</b> par mois</p>
-            <div class="devis-actions"><a class="bouton bouton-plein bouton-petit" href="#contact" data-devis-mail>Demander ce devis</a><a class="bouton bouton-trait bouton-petit" href="#contact" data-lien="rdv">Réserver un appel</a></div>
-          </article>
-          <article class="devis ecran" data-lumiere>
-            <p class="devis-pour">Salle ou studio</p>
-            <h4>Pack 8 + vos coachs</h4>
-            <ul class="devis-compo"><li>8 vidéos par mois&#8239;: coachs, cours, ambiance</li><li>La présentation de 2 de vos coachs le premier mois</li></ul>
-            <p class="devis-prix" data-prix-texte="1 390 € le premier mois, puis 890 € par mois"><b>1&nbsp;390&nbsp;€</b> le premier mois, puis 890&nbsp;€ par mois</p>
-            <div class="devis-actions"><a class="bouton bouton-plein bouton-petit" href="#contact" data-devis-mail>Demander ce devis</a><a class="bouton bouton-trait bouton-petit" href="#contact" data-lien="rdv">Réserver un appel</a></div>
-          </article>
-          </div>
         </div>
       </div>
 

@@ -661,31 +661,54 @@ if (assistant && formQ) {
 
   function piloteOuvert() { return Date.now() < Date.parse(PILOTE.fin) && PILOTE.placesRestantes > 0; }
 
-  /* La formule proposée : la grille de prix, jamais un prix inventé */
+  /* La formule proposée : la grille de prix, jamais un prix inventé.
+     Testée sur les 144 combinaisons de réponses (4 profils × 3 situations × 6 priorités × 2 rythmes). */
+  const MOT = m => new RegExp(`(^|[^a-zà-ÿ])(${m})([^a-zà-ÿ]|$)`);
   function propose() {
-    const profil = val('profil'), stade = val('stade'), prio = val('priorite'), rythme = val('rythme');
-    const besoin = champ('besoin').toLowerCase();
-    const horsGrille = profil === 'autre' || /youtube|[ée]v[ée]nement|comp[ée]tition|tournoi|gala|course|marathon|trail|mariage|film|documentaire|clip|aftermovie|s[ée]minaire|podcast/.test(besoin);
-    const salle = profil === 'salle' || prio === 'salle';
+    const profil = val('profil'), stade = val('stade'), prio = val('priorite'), mensuel = val('rythme') === 'mensuel';
+    const mots = champ('besoin').toLowerCase();
+    const horsGrille = profil === 'autre' || /youtube|vlog|podcast|interview|aftermovie|documentaire|mariage|marathon|tournoi|comp[ée]tition|[ée]v[ée]nement|s[ée]minaire/.test(mots) || MOT('films?|clips?|galas?|courses?|trails?').test(mots);
+    const lieu = profil === 'salle' || (profil === 'prof' && prio === 'salle');
     const fixe = (montant, suite) => ({ html: `<b>${euros(montant)}</b>${suite || ''}`, texte: `${euros(montant)}${suite || ''}` });
+    const surDevis = t => ({ html: `<b>Sur devis</b> ${t}`, texte: `sur devis ${t}` });
+    const notes = [];
+    const pack4 = pour => ({ pour, titre: 'Pack 4', compo: ['4 vidéos par mois, séance offerte', 'Les idées et les textes de chaque vidéo', 'Une vidéo par mois peut devenir une publicité'], prix: fixe(PACKS[4], ' par mois'), pack4: true });
+    const pack6 = pour => ({ pour, titre: 'Pack 6', compo: ['6 vidéos par mois, séance offerte', 'Une vidéo par mois montée en publicité', 'Le plan de contenu et un bilan en trois chiffres'], prix: fixe(PACKS[6], ' par mois') });
+    const troisCourtes = (pour, conseil) => ({ pour, titre: 'Trois vidéos courtes', compo: ['La séance de tournage', '3 vidéos courtes : reels, témoignages, coulisses'], prix: fixe(SEANCE + 3 * PRIX.courte), conseil });
     let r;
-    if (horsGrille) r = { pour: 'Projet sur mesure', titre: 'Production sur mesure', compo: ['Écriture, tournage et montage adaptés à votre projet', 'Format, durée et finition fixés ensemble à l’appel'], prix: { html: '<b>Sur devis</b> sous 48 h après l’appel', texte: 'sur devis, sous 48 h après l’appel' } };
-    else if (prio === 'images') r = { pour: 'Vous montez vous-même', titre: 'Le tournage seul', compo: ['Une séance de tournage avec le matériel', 'Vos rushs triés, prêts à monter'], prix: { html: '<b>Sur devis</b> après l’appel', texte: 'sur devis après l’appel' } };
-    else if (rythme === 'mensuel') {
-      if (salle) r = { pour: 'Salle ou studio, chaque mois', titre: 'Pack 8', compo: ['8 vidéos par mois : coachs, cours, ambiance', 'Une séance de tournage par mois, offerte', 'En option : la présentation de vos coachs'], prix: fixe(PACKS[8], ' par mois') };
-      else if (prio === 'prospects' || (prio === 'regulier' && stade !== 'lance')) r = { pour: prio === 'prospects' ? 'Attirer plus de prospects' : 'Publier sans y passer du temps', titre: 'Pack 6', compo: ['6 vidéos par mois, séance offerte', 'Une vidéo par mois montée en publicité', 'Le plan de contenu et un bilan en trois chiffres'], prix: fixe(PACKS[6], ' par mois') };
+    if (horsGrille) r = { pour: 'Projet sur mesure', titre: 'Production sur mesure', compo: ['Écriture, tournage et montage adaptés à votre projet', 'Format, durée et finition fixés ensemble à l’appel'], prix: surDevis('sous 48 h après l’appel') };
+    else if (prio === 'images') r = { pour: 'Vous montez vous-même', titre: mensuel ? 'Le tournage seul, chaque mois' : 'Le tournage seul', compo: [mensuel ? 'Une séance de tournage par mois, avec le matériel' : 'Une séance de tournage avec le matériel', 'Vos rushs triés, prêts à monter'], prix: surDevis('après l’appel') };
+    else if (lieu) {
+      if (mensuel) {
+        r = { pour: 'Salle, studio ou école, chaque mois', titre: 'Pack 8', compo: ['8 vidéos par mois : coachs, cours, ambiance', 'Une séance de tournage par mois, offerte', 'Une vidéo par mois peut devenir une publicité'], prix: fixe(PACKS[8], ' par mois') };
+        if (prio === 'image') notes.push(`La vidéo de présentation de votre salle s’ajoute pour ${euros(PRIX.presentation)} le premier mois, sans nouvelle séance.`);
+      }
+      else if (prio === 'prospects') r = { pour: 'Faire venir de nouveaux adhérents', titre: 'Présentation + publicité', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle', 'Une publicité, 2 accroches'], prix: fixe(SEANCE + PRIX.presentation + PRIX.pub) };
+      else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Vidéo de présentation', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle, 2 min'], prix: fixe(SEANCE + PRIX.presentation) };
+      else if (prio === 'regulier') r = troisCourtes('Du contenu d’avance', `Pour publier chaque semaine, le pack 8 revient moins cher par vidéo : ${euros(PACKS[8])} par mois, séance offerte.`);
+      else r = { pour: 'Montrer votre salle', titre: 'Présentation + 3 vidéos courtes', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle', '3 vidéos courtes : coachs, cours, ambiance'], prix: fixe(SEANCE + PRIX.presentation + 3 * PRIX.courte) };
+    } else if (mensuel) {
+      if (stade !== 'lance' && prio === 'prospects') r = pack6('Attirer plus de prospects');
+      else if (stade !== 'lance' && prio === 'regulier') r = pack6('Publier sans y passer du temps');
       else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Pack 4 + présentation', compo: ['4 vidéos par mois, séance offerte', 'Une vidéo de présentation en plus le premier mois'], prix: fixe(PACKS[4] + PRIX.presentation, ` le premier mois, puis ${euros(PACKS[4])} par mois`), pack4: true };
-      else r = { pour: stade === 'lance' ? 'Pour lancer votre activité' : 'Une vidéo par semaine', titre: 'Pack 4', compo: ['4 vidéos par mois, séance offerte', 'Les idées et les textes de chaque vidéo', 'Une vidéo par mois peut devenir une publicité'], prix: fixe(PACKS[4], ' par mois'), pack4: true };
+      else r = pack4(stade === 'lance' ? 'Pour lancer votre activité' : 'Une vidéo par semaine');
     } else {
-      if (salle) r = { pour: 'Montrer votre salle', titre: 'Présentation + 3 vidéos courtes', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle', '3 vidéos courtes : coachs, cours, ambiance'], prix: fixe(SEANCE + PRIX.presentation + 3 * PRIX.courte) };
-      else if (prio === 'prospects') r = { pour: 'Attirer plus de prospects', titre: 'Deux publicités', compo: ['La séance de tournage', '2 publicités prêtes pour Meta, 2 accroches chacune'], prix: fixe(SEANCE + 2 * PRIX.pub) };
+      if (prio === 'prospects') r = { pour: 'Attirer plus de prospects', titre: 'Deux publicités', compo: ['La séance de tournage', '2 publicités prêtes pour Meta, 2 accroches chacune'], prix: fixe(SEANCE + 2 * PRIX.pub) };
       else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Vidéo de présentation', compo: ['La séance de tournage', 'Une vidéo de présentation de 2 min', 'Pour votre page de rendez-vous, votre bio, votre épinglé'], prix: fixe(SEANCE + PRIX.presentation) };
-      else if (prio === 'regulier') r = { pour: 'Du contenu d’avance', titre: 'Trois vidéos courtes', compo: ['La séance de tournage', '3 vidéos courtes : reels, témoignages, coulisses'], prix: fixe(SEANCE + 3 * PRIX.courte), note: `Pour publier chaque semaine, le pack 4 revient moins cher : ${euros(PACKS[4])} par mois, séance offerte.` };
+      else if (prio === 'regulier') r = troisCourtes('Du contenu d’avance', `Pour publier chaque semaine, le pack 4 revient moins cher : ${euros(PACKS[4])} par mois, séance offerte.`);
       else r = { pour: 'Se présenter et se faire connaître', titre: 'Présentation + publicité', compo: ['La séance de tournage', 'Une vidéo de présentation', 'Une publicité, 2 accroches'], prix: fixe(SEANCE + PRIX.presentation + PRIX.pub) };
     }
-    if (!r.note && piloteOuvert() && r.pack4 && stade === 'lance') r.note = 'Offre de fin d’année : le premier mois du pack 4 à 384 € au lieu de 480 €, sans engagement, pour un contrat signé au plus tard le 23 novembre.';
-    if (!r.note && piloteOuvert() && r.titre === 'Pack 8') r.note = 'Offre de fin d’année : le premier mois sans engagement, pour un contrat signé au plus tard le 23 novembre.';
-    if (!r.note && prio === 'sais_pas') r.note = 'Vous hésitez encore : on affine la formule ensemble pendant l’appel.';
+    if (r.conseil) notes.push(r.conseil);
+    /* La réponse libre : ce que le visiteur cite et que la formule n'a pas */
+    if (!horsGrille && prio !== 'images') {
+      const a = re => r.compo.some(c => re.test(c));
+      if (/pr[ée]sent/.test(mots) && !a(/présentation/i)) notes.push(`Vous citez une vidéo de présentation : elle s’ajoute pour ${euros(PRIX.presentation)}, sans nouvelle séance.`);
+      if ((/publicit/.test(mots) || MOT('pubs?').test(mots)) && !a(/publicit/i)) notes.push(`Vous citez la publicité : chaque publicité s’ajoute pour ${euros(PRIX.pub)}, 2 accroches comprises.`);
+    }
+    if (piloteOuvert() && r.pack4) notes.push(`Offre de fin d’année : le premier mois du pack 4 à ${euros(PACKS[4] * .8)} au lieu de ${euros(PACKS[4])}, sans engagement, pour un contrat signé au plus tard le 23 novembre.`);
+    if (piloteOuvert() && r.titre === 'Pack 8') notes.push('Offre de fin d’année : le premier mois sans engagement, pour un contrat signé au plus tard le 23 novembre.');
+    if (prio === 'sais_pas') notes.push('Vous hésitez encore : on affine la formule ensemble pendant l’appel.');
+    r.note = notes.join('\n');
     return r;
   }
   function afficheProposition() {
@@ -728,6 +751,11 @@ if (assistant && formQ) {
   function montre(id, focus = true) {
     courant = id;
     assistant.classList.toggle('mode-contact', parcours === 'contact');
+    if (id === 'q4') {
+      const opt = $('input[name="priorite"][value="salle"]', formQ), coach = val('profil') === 'coach';
+      opt.closest('label').hidden = coach;
+      if (coach && opt.checked) opt.checked = false;
+    }
     if (id === 'proposition') afficheProposition();
     if (id === 'envoi') prepareEnvoi();
     let actif = null;

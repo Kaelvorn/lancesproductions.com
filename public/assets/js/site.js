@@ -53,13 +53,15 @@ function lienMail(sujet, corps) {
   return `mailto:${LIENS.email}?subject=${encodeURIComponent(sujet)}` + (corps ? `&body=${encodeURIComponent(corps)}` : '');
 }
 const MAIL_RDV = lienMail('Appel de 20 min · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMes disponibilités pour un appel de 20 min : [deux créneaux].\nMon compte Instagram ou mon site : [lien].\n\nMerci.');
+const MAIL_PROJET = lienMail('Projet sur mesure · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMon projet : [vidéo YouTube, événement, film de marque…].\nL\'objectif de la vidéo : [ce qu\'elle doit produire].\nOù elle sera diffusée : [YouTube, Instagram, site, publicité…].\nNiveau de finition attendu : [simple ou soigné].\nFormat et durée : [vertical ou horizontal, durée].\nCe que je fais moi-même : [matériel, montage, rien].\nMon budget : [fourchette].\nDate et lieu : [quand, où].\n\nMerci.');
 function externe(a) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
 function poseLiens() {
   $$('[data-lien]').forEach(a => {
     const k = a.dataset.lien;
     if (k === 'rdv') {
       if (LIENS.rdv) { a.href = LIENS.rdv; externe(a); } else { a.href = MAIL_RDV; }
-    } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
+    } else if (k === 'projet') { a.href = MAIL_PROJET; }
+    else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
     else if (k === 'telephone') { a.href = `tel:${LIENS.telephone}`; }
     else if (LIENS[k]) { a.href = LIENS[k]; externe(a); }
   });

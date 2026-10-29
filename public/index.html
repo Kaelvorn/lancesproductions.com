@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/sofia-sans-semi-condensed-800-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/montserrat-400-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css?v=2026-10-29b">
+<link rel="stylesheet" href="/assets/css/site.css?v=2026-10-29c">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"LANCES Productions","slogan":"L'effort, mis en lumière.","description":"Studio vidéo du fitness à Toulouse : vidéos courtes, publicités et vidéos de présentation pour les coachs sportifs, les salles et les studios.","url":"https://lancesproductions.com/","image":"https://lancesproductions.com/og.png","email":"kevinmazin.pro@gmail.com","telephone":"+33698591995","priceRange":"120 € - 890 €","areaServed":{"@type":"City","name":"Toulouse"},"address":{"@type":"PostalAddress","streetAddress":"80 rue Alfred Duméril","addressLocality":"Toulouse","postalCode":"31400","addressCountry":"FR"},"founder":{"@type":"Person","name":"Kevin Mazin"},"sameAs":["https://www.instagram.com/lancesproductions/","https://www.tiktok.com/@lances.productions","https://www.youtube.com/@LANCES-Productions"]}</script>
 </head>
 <body>
@@ -325,44 +325,76 @@
       </div>
 
       <div class="panneau" id="panneau-occasion" role="tabpanel" aria-labelledby="onglet-occasion">
-        <div class="occasion">
-          <article class="seance ecran" data-lumiere>
+        <p class="tarif-intro">Vous payez la séance une fois, puis seulement les vidéos que vous voulez. Sans engagement.</p>
+        <article class="seance-detail ecran" data-lumiere>
+          <div class="seance-tete">
             <p class="hud">Toujours en premier</p>
             <h3>La séance de tournage</h3>
             <p class="prix"><span class="montant">190</span><span class="devise">€</span></p>
+            <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: environ cinq heures et demie de travail pour vous&#8239;: l’appel, l’écriture, le trajet et jusqu’à trois heures de tournage.</p>
+          </div>
+          <div class="seance-temps">
+            <h4>Avant la séance</h4>
             <ul class="liste-coche">
-              <li>Un appel de préparation de 30 min</li>
-              <li>Les idées et les textes, écrits pour vous</li>
-              <li>3 h de tournage dans votre salle</li>
-              <li>Le matériel</li>
+              <li>Un appel de préparation de 30 min&#8239;: vos objectifs, vos clients, ce qui vous distingue</li>
+              <li>Les idées et les textes de chaque vidéo, écrits pour vous</li>
+              <li>Le découpage technique et le texte que vous direz</li>
+              <li>Trois jours avant, un brief court&#8239;: quoi porter, qui prévenir</li>
             </ul>
+          </div>
+          <div class="seance-temps">
+            <h4>Le jour du tournage</h4>
+            <ul class="liste-coche">
+              <li>Jusqu’à 3 h dans votre salle, aux heures creuses</li>
+              <li>Le matériel de tournage, image et son</li>
+              <li>Ma direction face caméra et plusieurs prises</li>
+              <li>Une autorisation écrite pour chaque personne filmée (modèle fourni)</li>
+            </ul>
+          </div>
+        </article>
+        <div class="articles">
+          <article class="article ecran" data-lumiere>
+            <div class="article-tete"><h3>Vidéo courte</h3><p class="prix"><span class="montant">120</span><span class="devise">€</span></p></div>
+            <p class="article-role">Le format qui vous rend visible chaque semaine.</p>
+            <dl class="article-meta"><div><dt>Durée</dt><dd>jusqu’à 60&nbsp;s</dd></div><div><dt>Format</dt><dd>vertical 9:16</dd></div><div><dt>Pour</dt><dd>reel, témoignage, coulisses</dd></div></dl>
+            <ul class="liste-coche"><li>Montage rythmé et sous-titres</li><li>Musique sous licence commerciale</li><li>Un appel à l’action à la fin</li><li>Deux séries de retouches</li></ul>
+            <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: l’écriture, le tri des rushs et le montage d’une vidéo de 60&nbsp;s.</p>
+            <div class="ligne-calcul" data-type="courte"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une vidéo courte">−</button><output id="n-courte" aria-live="polite">0</output><button type="button" data-plus aria-label="Ajouter une vidéo courte">+</button></div></div>
           </article>
-          <div class="calcul ecran" data-lumiere>
-            <h3>Puis vos vidéos, au choix</h3>
-            <div class="ligne-calcul" data-type="courte">
-              <div><b>Vidéo courte</b><small>Reel, témoignage, coulisses · 60 s</small></div>
-              <span class="prix-u">120&nbsp;€</span>
-              <div class="pas"><button type="button" data-moins aria-label="Retirer une vidéo courte">−</button><output id="n-courte" aria-live="polite">0</output><button type="button" data-plus aria-label="Ajouter une vidéo courte">+</button></div>
-            </div>
-            <div class="ligne-calcul" data-type="pub">
-              <div><b>Publicité</b><small>Prête pour Meta, 2 accroches · 60 s</small></div>
-              <span class="prix-u">150&nbsp;€</span>
-              <div class="pas"><button type="button" data-moins aria-label="Retirer une publicité">−</button><output id="n-pub" aria-live="polite">1</output><button type="button" data-plus aria-label="Ajouter une publicité">+</button></div>
-            </div>
-            <div class="ligne-calcul" data-type="presentation">
-              <div><b>Vidéo de présentation</b><small>Page de rendez-vous, bio · 2 min</small></div>
-              <span class="prix-u">250&nbsp;€</span>
-              <div class="pas"><button type="button" data-moins aria-label="Retirer une vidéo de présentation">−</button><output id="n-presentation" aria-live="polite">1</output><button type="button" data-plus aria-label="Ajouter une vidéo de présentation">+</button></div>
-            </div>
-            <div class="total"><span>Séance comprise</span><p class="prix"><span class="montant" id="total">590</span><span class="devise">€</span></p></div>
-            <p class="acompte">Acompte de 50&nbsp;% à la signature&#8239;: <span id="acompte">295</span>&nbsp;€, solde à la validation des vidéos</p>
-            <p class="calcul-note" id="calcul-note" aria-live="polite"></p>
-            <div class="actions">
-              <a class="bouton bouton-plein" id="demande-devis" href="#contact">Demander ce devis</a>
-              <a class="bouton bouton-trait" href="#contact" data-lien="rdv">Réserver un appel</a>
-            </div>
+          <article class="article ecran" data-lumiere>
+            <div class="article-tete"><h3>Publicité</h3><p class="prix"><span class="montant">150</span><span class="devise">€</span></p></div>
+            <p class="article-role">Faite pour faire venir des demandes, prête pour Meta.</p>
+            <dl class="article-meta"><div><dt>Durée</dt><dd>jusqu’à 60&nbsp;s</dd></div><div><dt>Format</dt><dd>vertical 9:16</dd></div><div><dt>Versions</dt><dd>2 accroches</dd></div></dl>
+            <ul class="liste-coche"><li>Deux versions montées, une par accroche&#8239;: vous gardez la meilleure</li><li>Sous-titres et musique sous licence</li><li>Un appel à l’action pensé pour la publicité</li><li>Deux séries de retouches</li></ul>
+            <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: deux versions montées et un texte écrit pour vendre.</p>
+            <div class="ligne-calcul" data-type="pub"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une publicité">−</button><output id="n-pub" aria-live="polite">1</output><button type="button" data-plus aria-label="Ajouter une publicité">+</button></div></div>
+          </article>
+          <article class="article ecran" data-lumiere>
+            <div class="article-tete"><h3>Vidéo de présentation</h3><p class="prix"><span class="montant">250</span><span class="devise">€</span></p></div>
+            <p class="article-role">Pour votre page de rendez-vous, votre bio ou votre épinglé.</p>
+            <dl class="article-meta"><div><dt>Durée</dt><dd>2&nbsp;min</dd></div><div><dt>Format</dt><dd>vertical 9:16</dd></div><div><dt>Structure</dt><dd>4 temps</dd></div></dl>
+            <ul class="liste-coche"><li>Qui vous êtes, votre méthode, pour qui, comment prendre rendez-vous</li><li>Plusieurs plans et prises montés en un récit</li><li>Sous-titres et musique sous licence</li><li>Deux séries de retouches</li></ul>
+            <p class="article-pourquoi"><b>Ce que couvre le prix</b>&#8239;: deux minutes à écrire, à structurer et à monter&#8239;: la vidéo la plus travaillée.</p>
+            <div class="ligne-calcul" data-type="presentation"><span>Dans mon devis</span><div class="pas"><button type="button" data-moins aria-label="Retirer une vidéo de présentation">−</button><output id="n-presentation" aria-live="polite">1</output><button type="button" data-plus aria-label="Ajouter une vidéo de présentation">+</button></div></div>
+          </article>
+        </div>
+        <div class="calcul-barre ecran" data-lumiere>
+          <div class="total"><span>Votre devis, séance comprise</span><p class="prix"><span class="montant" id="total">590</span><span class="devise">€</span></p></div>
+          <p class="acompte">Acompte de 50&nbsp;% à la signature&#8239;: <span id="acompte">295</span>&nbsp;€, solde à la validation des vidéos</p>
+          <p class="calcul-note" id="calcul-note" aria-live="polite"></p>
+          <div class="actions">
+            <a class="bouton bouton-plein" id="demande-devis" href="#contact">Demander ce devis</a>
+            <a class="bouton bouton-trait" href="#contact" data-lien="rdv">Réserver un appel</a>
           </div>
         </div>
+        <ul class="conditions">
+          <li><b>Aperçu</b> sous 7 jours ouvrés après la séance</li>
+          <li><b>Deux séries</b> de retouches par vidéo, sur le montage</li>
+          <li><b>Vidéo refaite</b> une fois si elle ne respecte pas le brief</li>
+          <li><b>Droits de diffusion</b> 5 ans&#8239;: réseaux, site, publicités en ligne</li>
+          <li><b>Rushs</b> gardés 3 mois, remis sur demande</li>
+          <li><b>Vidéos courtes seules</b>&#8239;: 3 au minimum par séance</li>
+        </ul>
         <div class="devis-types" data-revele>
           <div class="devis-types-tete"><p class="hud">Devis types</p><p>Des combinaisons prêtes à demander, aux prix de la grille.</p></div>
           <div class="devis-grille">
@@ -391,11 +423,15 @@
         </div>
       </div>
       <div class="panneau" id="panneau-mois" role="tabpanel" aria-labelledby="onglet-mois" hidden>
+        <p class="tarif-intro">Un prix fixe chaque mois, la séance offerte, et tout le reste compris.</p>
         <div class="packs">
           <article class="pack ecran" data-lumiere data-revele>
             <div class="pack-tete"><div><h3>Pack 4</h3><span class="pack-pour">Une vidéo par semaine</span></div></div>
             <p class="prix"><span class="montant" data-compte="480">480</span><span class="devise">€</span><span class="par">par mois</span></p>
-            <ul class="faits"><li><b>4 vidéos</b> par mois</li><li><b>120&nbsp;€</b> la vidéo</li><li><b>190&nbsp;€</b> de moins qu’à l’occasion</li></ul>
+            <p class="pack-accroche">Le minimum pour exister chaque semaine dans le fil de vos futurs clients.</p>
+            <p class="pack-rythme"><span class="hud">Rythme</span>1 vidéo par semaine</p>
+            <ul class="liste-coche"><li>4 vidéos de 60&nbsp;s au plus&#8239;: reels, témoignages, coulisses</li><li>Une d’elles peut devenir une publicité à 2 accroches</li><li>Une séance de 3 h au plus, offerte (190&nbsp;€ à l’occasion)</li><li>Les idées, les textes et le découpage des 4 vidéos</li><li>Le plan de contenu du mois et un bilan en trois chiffres</li></ul>
+            <ul class="faits"><li><b>120&nbsp;€</b> la vidéo</li><li>À l’occasion, le même mois coûterait <b>670&nbsp;€</b>&#8239;: <b>190&nbsp;€</b> d’économie</li></ul>
             <a class="bouton bouton-trait" href="#contact" data-paiement="pack4" data-texte-paiement="Commander le pack 4" data-texte-rdv="Réserver un appel">Réserver un appel</a>
             <p class="aussi" hidden><a class="lien-doux" href="#contact" data-lien="rdv">ou réserver un appel d’abord</a></p>
           </article>
@@ -403,31 +439,48 @@
             <span class="cadre-lumiere" aria-hidden="true"></span>
             <div class="pack-tete"><div><h3>Pack 6</h3><span class="pack-pour">Plus d’une vidéo par semaine</span></div><span class="badge">Conseillé</span></div>
             <p class="prix"><span class="montant" data-compte="690">690</span><span class="devise">€</span><span class="par">par mois</span></p>
-            <ul class="faits"><li><b>6 vidéos</b> par mois</li><li><b>115&nbsp;€</b> la vidéo</li><li><b>220&nbsp;€</b> de moins qu’à l’occasion</li></ul>
+            <p class="pack-accroche">Le bon équilibre&#8239;: assez de vidéos pour tester plusieurs sujets et garder ceux qui marchent.</p>
+            <p class="pack-rythme"><span class="hud">Rythme</span>1 à 2 vidéos par semaine</p>
+            <ul class="liste-coche"><li>6 vidéos de 60&nbsp;s au plus&#8239;: reels, témoignages, coulisses</li><li>Une d’elles peut devenir une publicité à 2 accroches</li><li>Une séance de 3 h au plus, offerte (190&nbsp;€ à l’occasion)</li><li>Les idées, les textes et le découpage des 6 vidéos</li><li>Le plan de contenu du mois et un bilan en trois chiffres</li></ul>
+            <ul class="faits"><li><b>115&nbsp;€</b> la vidéo</li><li>À l’occasion, le même mois coûterait <b>910&nbsp;€</b>&#8239;: <b>220&nbsp;€</b> d’économie</li></ul>
             <a class="bouton bouton-plein" href="#contact" data-paiement="pack6" data-texte-paiement="Commander le pack 6" data-texte-rdv="Réserver un appel">Réserver un appel</a>
             <p class="aussi" hidden><a class="lien-doux" href="#contact" data-lien="rdv">ou réserver un appel d’abord</a></p>
           </article>
           <article class="pack ecran" data-lumiere data-revele data-delai="200">
             <div class="pack-tete"><div><h3>Pack 8</h3><span class="pack-pour">Pour les salles et les studios</span></div></div>
             <p class="prix"><span class="montant" data-compte="890">890</span><span class="devise">€</span><span class="par">par mois</span></p>
-            <ul class="faits"><li><b>8 vidéos</b> par mois</li><li><b>111&nbsp;€</b> la vidéo</li><li><b>260&nbsp;€</b> de moins qu’à l’occasion</li></ul>
+            <p class="pack-accroche">De quoi montrer chaque facette d’un lieu&#8239;: vos coachs, vos cours, votre ambiance, vos adhérents.</p>
+            <p class="pack-rythme"><span class="hud">Rythme</span>2 vidéos par semaine</p>
+            <ul class="liste-coche"><li>8 vidéos de 60&nbsp;s au plus&#8239;: reels, témoignages, coulisses</li><li>Une d’elles peut devenir une publicité à 2 accroches</li><li>Une séance de 3 h au plus, offerte (190&nbsp;€ à l’occasion)</li><li>Les idées, les textes et le découpage des 8 vidéos</li><li>Le plan de contenu du mois et un bilan en trois chiffres</li></ul>
+            <ul class="faits"><li><b>111&nbsp;€</b> la vidéo</li><li>À l’occasion, le même mois coûterait <b>1&nbsp;150&nbsp;€</b>&#8239;: <b>260&nbsp;€</b> d’économie</li></ul>
             <a class="bouton bouton-trait" href="#contact" data-paiement="pack8" data-texte-paiement="Commander le pack 8" data-texte-rdv="Réserver un appel">Réserver un appel</a>
             <p class="aussi" hidden><a class="lien-doux" href="#contact" data-lien="rdv">ou réserver un appel d’abord</a></p>
           </article>
         </div>
-        <div class="inclus ecran" data-revele>
-          <div>
-            <h3>Dans chaque pack</h3>
-            <p>Engagement de 3 mois, puis au mois, avec 30 jours de préavis. Payé chaque mois d’avance, par virement.</p>
+        <div class="comparatif ecran" data-revele>
+          <h3>Tout ce qui est compris</h3>
+          <div class="comparatif-defile">
+            <table>
+              <thead><tr><th scope="col"><span class="sr">Ce qui est compris</span></th><th scope="col">Pack 4</th><th scope="col">Pack 6</th><th scope="col">Pack 8</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Vidéos par mois</th><td data-pack="Pack 4">4</td><td data-pack="Pack 6">6</td><td data-pack="Pack 8">8</td></tr>
+                <tr><th scope="row">Rythme de publication</th><td data-pack="Pack 4">1 par semaine</td><td data-pack="Pack 6">1 à 2 par semaine</td><td data-pack="Pack 8">2 par semaine</td></tr>
+                <tr><th scope="row">Durée de chaque vidéo</th><td colspan="3">Jusqu’à 60&nbsp;s, format vertical 9:16</td></tr>
+                <tr><th scope="row">Vidéo transformable en publicité (2 accroches)</th><td colspan="3">Une par mois</td></tr>
+                <tr><th scope="row">Séance de tournage</th><td colspan="3">Une par mois, 3 h au plus, dans votre salle, offerte</td></tr>
+                <tr><th scope="row">Préparation</th><td colspan="3">Idées, textes et découpage de chaque vidéo&#8239;; brief trois jours avant</td></tr>
+                <tr><th scope="row">Montage</th><td colspan="3">Sous-titres, musique sous licence, appel à l’action</td></tr>
+                <tr><th scope="row">Retouches</th><td colspan="3">Deux séries par vidéo, sur le montage</td></tr>
+                <tr><th scope="row">Délai</th><td colspan="3">Aperçu sous 7 jours ouvrés après la séance</td></tr>
+                <tr><th scope="row">Suivi</th><td colspan="3">Plan de contenu du mois, bilan en trois chiffres</td></tr>
+                <tr><th scope="row">Droits de diffusion</th><td colspan="3">5 ans&#8239;: réseaux, site, publicités en ligne</td></tr>
+                <tr><th scope="row">Rushs</th><td colspan="3">Gardés 3 mois, remis sur demande</td></tr>
+                <tr><th scope="row">Prix par vidéo</th><td data-pack="Pack 4">120&nbsp;€</td><td data-pack="Pack 6">115&nbsp;€</td><td data-pack="Pack 8">111&nbsp;€</td></tr>
+                <tr><th scope="row">Économie sur un mois à l’occasion</th><td data-pack="Pack 4">190&nbsp;€</td><td data-pack="Pack 6">220&nbsp;€</td><td data-pack="Pack 8">260&nbsp;€</td></tr>
+              </tbody>
+            </table>
           </div>
-          <ul class="liste-coche">
-            <li>Une séance de tournage par mois, 3 h au plus, offerte</li>
-            <li>Les idées et les textes de chaque vidéo</li>
-            <li>Vidéos courtes au choix&#8239;: reels, témoignages, coulisses</li>
-            <li>Une vidéo par mois peut devenir une publicité</li>
-            <li>Le plan de contenu du mois</li>
-            <li>Un bilan en trois chiffres</li>
-          </ul>
+          <p class="comparatif-pied">Engagement de 3 mois, puis au mois, avec 30 jours de préavis. Payé chaque mois d’avance, par virement. Présentation ou publicité en plus&#8239;: au prix de l’occasion, sans séance.</p>
         </div>
         <div class="devis-types" data-revele>
           <div class="devis-types-tete"><p class="hud">Devis types</p><p>Des combinaisons prêtes à demander, aux prix de la grille.</p></div>
@@ -759,6 +812,6 @@
   <div class="marque-geante" aria-hidden="true"><span>Lances</span><span>Lances</span></div>
 </footer>
 
-<script src="/assets/js/site.js?v=2026-10-29b" defer></script>
+<script src="/assets/js/site.js?v=2026-10-29c" defer></script>
 </body>
 </html>

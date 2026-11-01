@@ -529,6 +529,16 @@ body.menu-ouvert{overflow:hidden}
 .niveau b{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;font-size:1.15rem;line-height:1.05;color:var(--parchemin)}
 .niveau span:last-child{color:var(--gris);font-size:.88rem}
 @media (max-width:980px){.option{grid-template-columns:minmax(0,1fr)}}
+.direction{margin-top:clamp(14px,1.8vw,24px);padding:clamp(24px,2.8vw,38px);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(20px,3vw,44px);align-items:start;background:linear-gradient(160deg,#20262E,#0E1115 70%)}
+.direction-tete{display:grid;gap:14px;justify-items:start}
+.direction h3{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;font-size:1.75rem;line-height:1}
+.direction .pack-nom{margin-bottom:0}
+.direction .prix .montant{font-size:clamp(3rem,2.4rem + 2vw,4.4rem)}
+.direction-corps{display:grid;gap:18px}
+.direction .liste-coche li b{color:var(--parchemin);font-weight:600}
+.ecart{display:grid;gap:6px;padding:12px 14px;border-radius:10px;background:rgba(84,112,128,.10);box-shadow:inset 0 0 0 1px rgba(98,130,148,.22);font-size:.88rem;color:var(--gris)}
+.ecart b{color:var(--parchemin-doux);font-weight:600}
+@media (max-width:980px){.direction{grid-template-columns:minmax(0,1fr)}}
 .comparatif{margin-top:clamp(14px,1.8vw,24px);padding:clamp(22px,2.6vw,34px)}
 .comparatif h3{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;font-size:1.5rem;line-height:1;margin-bottom:18px}
 .comparatif-defile{overflow-x:auto;-webkit-overflow-scrolling:touch}

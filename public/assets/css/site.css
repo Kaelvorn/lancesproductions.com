@@ -660,7 +660,8 @@ legend.q-titre{margin-bottom:16px}
 
 /* Pilote */
 .section.tarifs{padding-bottom:clamp(36px,4vw,56px)}
-.section.pilote{padding-top:clamp(20px,2.5vw,40px)}
+.section.pilote{padding-top:clamp(20px,2.5vw,40px);padding-bottom:clamp(36px,4vw,56px)}
+.section.kevin{padding-top:clamp(20px,2.5vw,40px)}
 .pilote-ecran{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,72px);padding:clamp(28px,5vw,72px);background:radial-gradient(80% 120% at 100% 0%,rgba(240,86,42,.13),transparent 55%),linear-gradient(160deg,#1B2128,#0B0E12 70%)}
 .pilote-texte{display:grid;gap:22px;align-content:start}
 .pilote-texte .titre-section{font-size:clamp(2.3rem,1.5rem + 3.4vw,4.4rem)}

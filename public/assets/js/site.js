@@ -461,7 +461,7 @@ if (piste) {
    ========================================================= */
 const montage = $('#montage'), etapes = $$('.etape'), clipsV1 = $$('.clip-v1'), clipsV2 = $$('.clip-titre');
 const onde = $('#onde'), mtc = $('#montage-tc'), metape = $('#montage-etape');
-const NOMS = ['Appel', 'Textes', 'Séance', 'Montage', 'Livraison', 'Bilan'];
+const NOMS = ['Analyse', 'Textes', 'Séance', 'Montage', 'Livraison', 'Pilotage'];
 let barresOnde = [], pMontage = 0, etapeActive = -1;
 $$('.clip').forEach(c => { c.style.setProperty('--de', c.dataset.de); c.style.setProperty('--a', c.dataset.a); });
 if (onde) {

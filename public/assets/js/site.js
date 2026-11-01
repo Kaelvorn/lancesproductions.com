@@ -54,7 +54,7 @@ function lienMail(sujet, corps) {
 }
 const MAIL_RDV = lienMail('Appel de 30 min · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\nMon compte Instagram ou mon site : [lien].\n\nMerci.');
 /* La Direction de contenu passe toujours par l'e-mail : la provenance se lit dans l'objet (Airtable, champ Source). */
-const MAIL_DIRECTION = lienMail('Direction de contenu · Réserver mon appel', 'Bonjour Kevin,\n\nJe souhaite un appel de 30 min au sujet de la Direction de contenu (1 290 € par mois).\nJe suis [prénom, activité, ville].\nMes disponibilités : [deux créneaux].\nMon compte Instagram ou YouTube : [lien].\n\nMerci.');
+const MAIL_DIRECTION = lienMail('Direction de contenu · Réserver mon appel', 'Bonjour Kevin,\n\nJe souhaite un appel de 30 min au sujet de la Direction de contenu.\nJe suis [prénom, activité, ville].\nMes disponibilités : [deux créneaux].\nMon compte Instagram ou YouTube : [lien].\n\nMerci.');
 function externe(a) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
 function poseLiens() {
   $$('[data-lien]').forEach(a => {
@@ -577,7 +577,7 @@ placeIndic();
 addEventListener('resize', placeIndic);
 if (document.fonts) document.fonts.ready.then(placeIndic);
 
-const PRIX = { courte: 120, pub: 220, presentation: 380 }, SEANCE = 190, PACKS = { 4: 480, 6: 740, 8: 990 }, DIRECTION = 1290;
+const PRIX = { courte: 120, pub: 220, presentation: 380 }, SEANCE = 190, PACKS = { 4: 480, 6: 740, 8: 990 };
 const NOMS_ARTICLES = { courte: 'vidéo courte', pub: 'publicité', presentation: 'vidéo de présentation' };
 const qte = { courte: 0, pub: 0, presentation: 0 };
 const totalEl = $('#total'), acompteEl = $('#acompte'), noteEl = $('#calcul-note'), devisEl = $('#demande-devis');
@@ -694,7 +694,7 @@ if (assistant && formQ) {
     const troisCourtes = (pour, conseil) => ({ pour, titre: 'Trois vidéos courtes', compo: ['La séance de tournage', '3 vidéos courtes : reels, témoignages, coulisses'], prix: fixe(SEANCE + 3 * PRIX.courte), conseil });
     let r;
     const youtubeMensuel = mensuel && /youtube|vid[ée]o longue|format long|podcast/.test(mots);
-    if (youtubeMensuel) r = { pour: 'Des formats courts chaque semaine et une vidéo YouTube chaque mois', titre: 'Direction de contenu', compo: ['8 vidéos courtes par mois, 2 séances de 4 h', 'Une vidéo YouTube chaque mois, jusqu’à 12 min', 'Modules Stratégie de contenu et Pilotage compris'], prix: fixe(DIRECTION, ' par mois') };
+    if (youtubeMensuel) r = { pour: 'Des formats courts chaque semaine et une vidéo YouTube chaque mois', titre: 'Direction de contenu', compo: ['8 vidéos courtes par mois, 2 séances de 4 h', 'Une vidéo YouTube chaque mois, jusqu’à 12 min', 'Modules Stratégie de contenu et Pilotage compris'], prix: surDevis('après l’appel') };
     else if (horsGrille) r = { pour: 'Projet sur mesure', titre: 'Production sur mesure', compo: ['Écriture, tournage et montage adaptés à votre projet', 'Format, durée et finition fixés ensemble à l’appel'], prix: surDevis('sous 48 h après l’appel') };
     else if (prio === 'images') r = { pour: 'Vous montez vous-même', titre: mensuel ? 'Le tournage seul, chaque mois' : 'Le tournage seul', compo: [mensuel ? 'Une séance de tournage par mois, avec le matériel' : 'Une séance de tournage avec le matériel', 'Vos rushs triés, prêts à monter'], prix: surDevis('après l’appel') };
     else if (lieu) {

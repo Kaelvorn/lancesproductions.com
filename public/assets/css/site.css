@@ -544,11 +544,13 @@ body.menu-ouvert{overflow:hidden}
 .direction h3{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;font-size:clamp(2.6rem,1.6rem + 3.6vw,4.6rem);line-height:.9;letter-spacing:.01em;text-wrap:balance}
 .direction .pack-accroche{font-size:1.02rem;max-width:40em;margin-top:0}
 .badge-or{background:linear-gradient(90deg,var(--or),#FFE0B0);color:var(--noir)}
-.direction-prix{display:grid;gap:14px;justify-items:start}
-.sur-devis{width:100%;display:grid;gap:6px;padding:18px 20px 20px;border-radius:12px;background:linear-gradient(160deg,rgba(242,235,221,.16),rgba(242,235,221,.05) 75%);box-shadow:inset 0 0 0 1px rgba(242,235,221,.42),inset 0 1px 0 rgba(242,235,221,.5)}
-.sur-devis .hud{color:var(--gris)}
-.sur-devis-mot{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;font-size:clamp(2.4rem,1.8rem + 1.9vw,3.6rem);line-height:.95;letter-spacing:.01em;color:var(--parchemin)}
-.sur-devis-texte{font-size:.9rem;color:var(--parchemin-doux);max-width:34em}
+.direction-prix{display:grid;gap:clamp(24px,2.4vw,30px);justify-items:start}
+.sur-devis{--v-c:rgba(242,235,221,.72);--v-l:22px;--v-e:2px;width:100%;display:grid;gap:8px;padding:24px 26px 26px;background:linear-gradient(var(--v-c) 0 0) 0 0/var(--v-l) var(--v-e) no-repeat,linear-gradient(var(--v-c) 0 0) 0 0/var(--v-e) var(--v-l) no-repeat,linear-gradient(var(--v-c) 0 0) 100% 0/var(--v-l) var(--v-e) no-repeat,linear-gradient(var(--v-c) 0 0) 100% 0/var(--v-e) var(--v-l) no-repeat,linear-gradient(var(--v-c) 0 0) 0 100%/var(--v-l) var(--v-e) no-repeat,linear-gradient(var(--v-c) 0 0) 0 100%/var(--v-e) var(--v-l) no-repeat,linear-gradient(var(--v-c) 0 0) 100% 100%/var(--v-l) var(--v-e) no-repeat,linear-gradient(var(--v-c) 0 0) 100% 100%/var(--v-e) var(--v-l) no-repeat}
+.sur-devis .hud{display:flex;align-items:center;gap:8px;color:var(--gris-sourd)}
+.sur-devis .hud::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--rouge);box-shadow:0 0 8px rgba(240,86,42,.6);animation:rec 2.4s steps(1) infinite}
+@keyframes rec{50%{opacity:.2}}
+.sur-devis-mot{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;font-size:clamp(3rem,2.3rem + 2.2vw,4.6rem);line-height:.9;letter-spacing:.01em;color:var(--parchemin)}
+.sur-devis-texte{font-size:.9rem;color:var(--gris);max-width:34em}
 .direction-corps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,1.8vw,22px);align-items:start}
 .direction .liste-coche li b{color:var(--parchemin);font-weight:600}
 .direction .module{background:linear-gradient(160deg,rgba(255,197,61,.14),rgba(240,86,42,.05) 70%);box-shadow:inset 0 0 0 1px rgba(255,197,61,.4)}

@@ -236,7 +236,7 @@ body.menu-ouvert{overflow:hidden}
 .bandeau-groupe svg{width:clamp(38px,4vw,58px);height:auto;flex:none}
 
 /* ---------- Sections ---------- */
-.section{position:relative;padding-block:clamp(96px,13vw,190px)}
+.section{position:relative;padding-block:clamp(28px,3.25vw,48px)}
 
 /* Constat */
 .constat .surtitre{margin-bottom:clamp(28px,4vw,48px)}
@@ -404,7 +404,6 @@ body.menu-ouvert{overflow:hidden}
 .variante h3 .hud{color:var(--rouge);font-size:.68rem}
 .variante p{margin-top:10px;color:var(--parchemin-doux);font-size:.95rem}
 @media (max-width:980px){.variantes{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.formats{padding-bottom:clamp(72px,9vw,130px)}
 @media (max-width:560px){.variantes{grid-template-columns:minmax(0,1fr)}.variante-cadre{aspect-ratio:16/10}.variante{grid-template-columns:104px minmax(0,1fr);gap:14px;align-items:start}.variante-cadre .hud{display:none}.au-dela-appel .bouton{width:100%}}
 @media (max-width:900px){
   .formats-grille{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:min(84%,340px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;margin-inline:calc(-1 * var(--gouttiere));padding-inline:var(--gouttiere);scroll-padding-inline:var(--gouttiere);scrollbar-width:none}
@@ -659,9 +658,6 @@ legend.q-titre{margin-bottom:16px}
 @media (max-width:560px){.inclus .liste-coche{grid-template-columns:minmax(0,1fr)}.ligne-calcul{grid-template-columns:minmax(0,1fr) auto;row-gap:8px}.ligne-calcul .prix-u{grid-row:1;grid-column:2}.ligne-calcul .pas{grid-column:1 / -1;justify-self:start}.onglets{display:grid;width:100%}.onglets button{padding:12px 6px;font-size:.8rem;letter-spacing:.03em}}
 
 /* Pilote */
-.section.tarifs{padding-bottom:clamp(36px,4vw,56px)}
-.section.pilote{padding-top:clamp(20px,2.5vw,40px);padding-bottom:clamp(36px,4vw,56px)}
-.section.kevin{padding-top:clamp(20px,2.5vw,40px)}
 .pilote-ecran{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(28px,5vw,72px);padding:clamp(28px,5vw,72px);background:radial-gradient(80% 120% at 100% 0%,rgba(240,86,42,.13),transparent 55%),linear-gradient(160deg,#1B2128,#0B0E12 70%)}
 .pilote-texte{display:grid;gap:22px;align-content:start}
 .pilote-texte .titre-section{font-size:clamp(2.3rem,1.5rem + 3.4vw,4.4rem)}
@@ -755,7 +751,7 @@ legend.q-titre{margin-bottom:16px}
 .fin-note{font-size:.85rem;color:var(--gris-sourd);max-width:40em}
 
 /* Pied de page */
-.pied{position:relative;overflow:clip;border-top:1px solid var(--ligne);padding-top:clamp(64px,8vw,110px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.pied{position:relative;overflow:clip;border-top:1px solid var(--ligne);padding-top:clamp(28px,3.25vw,48px);padding-bottom:env(safe-area-inset-bottom,0px)}
 .pied-grille{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(4,minmax(0,1fr));gap:32px}
 .pied-marque{display:grid;gap:18px;align-content:start}
 .pied-marque .signature-symbole{width:64px}

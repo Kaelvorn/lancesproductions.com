@@ -54,15 +54,13 @@ function lienMail(sujet, corps) {
   return `mailto:${LIENS.email}?subject=${encodeURIComponent(sujet)}` + (corps ? `&body=${encodeURIComponent(corps)}` : '');
 }
 const MAIL_RDV = lienMail('Appel de 30 min · LANCES Productions', 'Bonjour Kevin,\n\nJe suis [prénom, activité, ville].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\nMon compte Instagram ou mon site : [lien].\n\nMerci.');
-/* La Direction de contenu passe toujours par l'e-mail : la provenance se lit dans l'objet (Airtable, champ Source). */
-const MAIL_DIRECTION = lienMail('Direction de contenu · Réserver mon appel', 'Bonjour Kevin,\n\nJe souhaite un appel de 30 min au sujet de la Direction de contenu.\nJe suis [prénom, activité, ville].\nMes disponibilités : [deux créneaux].\nMon compte Instagram ou YouTube : [lien].\n\nMerci.');
 function externe(a) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
 function poseLiens() {
   $$('[data-lien]').forEach(a => {
     const k = a.dataset.lien;
     if (k === 'rdv') {
       if (LIENS.rdv) { a.href = LIENS.rdv; externe(a); } else { a.href = MAIL_RDV; }
-    } else if (k === 'direction') { a.href = MAIL_DIRECTION; } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
+    } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
     else if (k === 'telephone') { a.href = `tel:${LIENS.telephone}`; }
     else if (LIENS[k]) { a.href = LIENS[k]; externe(a); }
   });

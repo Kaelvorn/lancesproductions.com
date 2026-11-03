@@ -60,7 +60,7 @@ function poseLiens() {
     const k = a.dataset.lien;
     if (k === 'rdv') {
       if (LIENS.rdv) { a.href = LIENS.rdv; externe(a); } else { a.href = MAIL_RDV; }
-    } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; a.textContent = a.textContent.trim() || LIENS.email; }
+    } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; if (!a.textContent.trim()) a.textContent = LIENS.email; }
     else if (k === 'telephone') { a.href = `tel:${LIENS.telephone}`; }
     else if (LIENS[k]) { a.href = LIENS[k]; externe(a); }
   });

@@ -28,8 +28,8 @@ const LIENS = {
 const PILOTE = {
   placesTotal: 3,
   placesRestantes: 3,
-  majPlaces: '2026-10-27',
-  fin: '2026-11-23T23:59:59+01:00'
+  majPlaces: '2026-11-03',
+  fin: '2026-11-30T23:59:59+01:00'
 };
 
 /* =========================================================
@@ -723,8 +723,8 @@ if (assistant && formQ) {
       if (/pr[ée]sent/.test(mots) && !a(/présentation/i)) notes.push(`Vous citez une vidéo de présentation : elle s’ajoute pour ${euros(PRIX.presentation)}, sans nouvelle séance.`);
       if ((/publicit/.test(mots) || MOT('pubs?').test(mots)) && !a(/publicit/i)) notes.push(`Vous citez la publicité : chaque publicité s’ajoute pour ${euros(PRIX.pub)}, 2 accroches comprises.`);
     }
-    if (piloteOuvert() && r.pack4) notes.push(`Offre de fin d’année : le premier mois du pack 4 à ${euros(PACKS[4] * .8)} au lieu de ${euros(PACKS[4])}, sans engagement, pour un contrat signé au plus tard le 23 novembre.`);
-    if (piloteOuvert() && r.titre.startsWith('Pack 8')) notes.push('Offre de fin d’année : le premier mois sans engagement, pour un contrat signé au plus tard le 23 novembre.');
+    if (piloteOuvert() && r.pack4) notes.push(`Offre de fin d’année : le premier mois du pack 4 à ${euros(PACKS[4] * .8)} au lieu de ${euros(PACKS[4])}, sans engagement, pour un contrat signé au plus tard le 30 novembre.`);
+    if (piloteOuvert() && r.titre.startsWith('Pack 8')) notes.push('Offre de fin d’année : le premier mois sans engagement, pour un contrat signé au plus tard le 30 novembre.');
     if (prio === 'sais_pas') notes.push('Vous hésitez encore : on affine la formule ensemble pendant l’appel.');
     r.note = notes.join('\n');
     return r;

@@ -25,7 +25,7 @@ package.json                scripts : dev, deploy, check
 
 Tout ce qui change dans la vie du site est en tête de `public/assets/js/site.js` :
 
-- `LIENS.rdv` : l'adresse de la page de réservation Google Agenda. Vide, les boutons « Réserver un appel » ouvrent un e-mail pré-rempli.
+- `LIENS.rdv` : l'adresse de la page de réservation Calendly (depuis le 10/11/2026 ; avant, Google Agenda). Vide, les boutons « Réserver un appel » ouvrent un e-mail pré-rempli.
 - `LIENS.paiement` : les liens de paiement Stripe par formule. **Laissés vides** (avis juridique du 26/10/2026) : les boutons mènent à la prise de rendez-vous. Ne les remplir qu'après la décision de Kevin et les précautions de `organisation/site.md` § 5.
 - `PILOTE` : places restantes et date de mise à jour, date de fin du tarif de lancement (23/11/2026). Après cette date, ou quand les places sont prises, la section se ferme seule.
 

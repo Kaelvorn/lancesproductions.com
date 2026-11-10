@@ -14,10 +14,11 @@ const LIENS = {
   youtube: 'https://www.youtube.com/@LANCES-Productions',
   email: 'kevinmazin.pro@gmail.com',
   telephone: '+33698591995',
-  /* Page de réservation Google Agenda « Appel découverte » (30 min, compte
-     kevinmazin.pro, créée le 02/11/2026). Vide : les boutons « Réserver un
-     appel » ouvrent un e-mail pré-rempli à la place. */
-  rdv: 'https://calendar.app.google/EMBDZAWaoToXmq4bA',
+  /* Page Calendly « Appel découverte » (30 min, compte kevinmazin.pro,
+     offre gratuite, 10/11/2026 ; remplace la page Google Agenda du 02/11).
+     Toujours un lien, jamais une fenêtre intégrée (ses traceurs imposeraient
+     un bandeau). Vide : les boutons ouvrent un e-mail pré-rempli. */
+  rdv: 'https://calendly.com/lances-productions/appel-decouverte',
   /* Liens de paiement Stripe, par formule. Laissés vides (avis juridique du
      26/10/2026) : les boutons « Commander » mènent à la prise de rendez-vous.
      Ne les remplir qu'après la décision de Kevin et les précautions listées

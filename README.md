@@ -31,6 +31,10 @@ Tout ce qui change dans la vie du site est en tête de `public/assets/js/site.js
 
 Les textes sont dans les fichiers HTML. Les prix de la page doivent rester ceux de `memoire/offre.md` § 6 (dépôt du copilote) et des CGV.
 
+## Mise en ligne
+
+Chaque push sur `main` lance une construction Cloudflare (Workers Builds : dépôt connecté, branche `main`, commande `npx wrangler deploy`), en ligne en une minute environ. **Si aucune construction n'apparaît dans Cloudflare (Workers & Pages → lancesproductions → Deployments)**, le signal de GitHub s'est perdu (constaté le 10/11/2026 : commit `a0c56ec` jamais construit, réglages intacts) : un nouveau push sur `main` le relance.
+
 ## Travailler en local
 
 ```bash

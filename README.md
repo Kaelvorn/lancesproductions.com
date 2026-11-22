@@ -26,10 +26,10 @@ package.json                scripts : dev, deploy, check
 Tout ce qui change dans la vie du site est en tête de `public/assets/js/site.js` :
 
 - `LIENS.rdv` : l'adresse de la page de réservation Calendly (depuis le 10/11/2026 ; avant, Google Agenda). Vide, les boutons « Réserver un appel » ouvrent un e-mail pré-rempli.
-- `LIENS.paiement` : les liens de paiement Stripe par formule. **Laissés vides** (avis juridique du 26/10/2026) : les boutons mènent à la prise de rendez-vous. Ne les remplir qu'après la décision de Kevin et les précautions de `organisation/site.md` § 5.
-- `PILOTE` : places restantes et date de mise à jour, date de fin du tarif de lancement (23/11/2026). Après cette date, ou quand les places sont prises, la section se ferme seule.
+- `LIENS.rdvDemande` : `true` quand la page Calendly a pour première question « Votre demande » ; les briques cochées dans l'offre la remplissent alors d'avance. `false` : rien n'est transmis.
+- `LANCEMENT` : places du tarif de lancement (total, restantes, date de mise à jour) et, si besoin, une date de fin. À zéro place, ou la date passée, le bandeau disparaît seul.
 
-Les textes sont dans les fichiers HTML. Les prix de la page doivent rester ceux de `memoire/offre.md` § 6 (dépôt du copilote) et des CGV.
+Les textes sont dans les fichiers HTML. **La page n'affiche aucun prix** (offre à la carte, sur devis) : la grille de prix reste dans le dépôt du copilote (`livrables/offre-a-la-carte/`), jamais ici. Ce que la page promet (retouches, délais, tarif de lancement) doit rester ce que disent les CGV.
 
 ## Mise en ligne
 

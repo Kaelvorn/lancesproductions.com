@@ -19,18 +19,19 @@ const LIENS = {
      Toujours un lien, jamais une fenêtre intégrée (ses traceurs imposeraient
      un bandeau). Vide : les boutons ouvrent un e-mail pré-rempli. */
   rdv: 'https://calendly.com/lances-productions/appel-decouverte',
-  /* Liens de paiement Stripe, par formule. Laissés vides (avis juridique du
-     26/10/2026) : les boutons « Commander » mènent à la prise de rendez-vous.
-     Ne les remplir qu'après la décision de Kevin et les précautions listées
-     dans organisation/site.md (dépôt du copilote). */
-  paiement: { pilote: '', pack4: '', pack6: '', pack8: '', direction: '' }
+  /* true quand la page Calendly a pour première question « Votre demande » :
+     les briques cochées dans l'offre la remplissent d'avance (?a1=…).
+     false : le bouton ouvre la page Calendly sans rien transmettre. */
+  rdvDemande: false
 };
-/* Tarif de lancement : places et date de fin (CGV art. 2, devis 3). */
-const PILOTE = {
+/* Tarif de lancement (CGV art. 2) : les trois premières collaborations au mois.
+   placesRestantes à 0, ou la date de fin passée : le bandeau disparaît seul.
+   fin : vide (seul le nombre de places compte), ou une date comme '2027-01-31T23:59:59+01:00'. */
+const LANCEMENT = {
   placesTotal: 3,
   placesRestantes: 3,
   majPlaces: '2026-11-03',
-  fin: '2026-11-30T23:59:59+01:00'
+  fin: ''
 };
 
 /* =========================================================
@@ -49,7 +50,7 @@ const dateFr = iso => { const [a, m, j] = iso.split('-'); return `${j}/${m}/${a}
 if (!pointeurFin) document.documentElement.classList.add('tactile');
 
 /* =========================================================
-   2. Les liens de sortie (Instagram, rendez-vous, e-mail, paiement)
+   2. Les liens de sortie (Instagram, rendez-vous, e-mail)
    ========================================================= */
 function lienMail(sujet, corps) {
   return `mailto:${LIENS.email}?subject=${encodeURIComponent(sujet)}` + (corps ? `&body=${encodeURIComponent(corps)}` : '');
@@ -64,20 +65,6 @@ function poseLiens() {
     } else if (k === 'email') { a.href = `mailto:${LIENS.email}`; if (!a.textContent.trim()) a.textContent = LIENS.email; }
     else if (k === 'telephone') { a.href = `tel:${LIENS.telephone}`; }
     else if (LIENS[k]) { a.href = LIENS[k]; externe(a); }
-  });
-  /* Boutons des formules : paiement si un lien existe, sinon rendez-vous */
-  $$('[data-paiement]').forEach(a => {
-    const url = LIENS.paiement[a.dataset.paiement];
-    const aussi = a.parentElement.querySelector('.aussi');
-    if (url) {
-      a.href = url; externe(a);
-      a.textContent = a.dataset.textePaiement || 'Commander';
-      if (aussi) aussi.hidden = false;
-    } else {
-      a.href = LIENS.rdv || MAIL_RDV; if (LIENS.rdv) externe(a);
-      a.textContent = a.dataset.texteRdv || 'Réserver un appel';
-      if (aussi) aussi.hidden = true;
-    }
   });
   $$('[data-lien-note]').forEach(p => { p.textContent = LIENS.rdv ? p.dataset.lienNote : p.dataset.lienNoteMail; });
 }
@@ -339,9 +326,7 @@ document.addEventListener('click', e => {
   if (!cible) return;
   e.preventDefault();
   if (menu && !menu.hidden) ouvrirMenu(false);
-  let vise = cible;
-  if (cible.matches('[role="tabpanel"]')) { ouvrePanneau(cible); vise = $('.onglets') || cible; }
-  vise.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' });
+  cible.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' });
   history.replaceState(null, '', id);
 });
 
@@ -552,326 +537,61 @@ function telephone(el) {
 $$('[data-telephone]').forEach(telephone);
 
 /* =========================================================
-   12. Tarifs : onglets et calcul à l'occasion
+   12. L'offre à la carte : le composeur
+   Les briques cochées écrivent la demande. Rien ne quitte l'appareil
+   avant que le visiteur réserve son appel ou envoie son e-mail.
    ========================================================= */
-const onglets = $$('[role="tab"]'), indic = $('.onglet-indic');
-function placeIndic() { const a = onglets.find(o => o.getAttribute('aria-selected') === 'true'); if (a && indic) { indic.style.width = a.offsetWidth + 'px'; indic.style.transform = `translateX(${a.offsetLeft}px)`; } }
-function choisit(o, focus) {
-  onglets.forEach(x => {
-    const sel = x === o;
-    x.setAttribute('aria-selected', String(sel)); x.tabIndex = sel ? 0 : -1;
-    const p = document.getElementById(x.getAttribute('aria-controls'));
-    if (sel && p.hidden) { p.hidden = false; if (!reduit) { p.classList.remove('arrive'); void p.offsetWidth; p.classList.add('arrive'); } }
-    else if (!sel) p.hidden = true;
-  });
-  if (focus) o.focus();
-  placeIndic();
+/* Les anciennes ancres (liens déjà partagés) mènent à l'offre */
+if (['#tarifs', '#pilote', '#sur-mesure'].includes(location.hash)) {
+  history.replaceState(null, '', '#offre');
+  const o = $('#offre'); if (o) o.scrollIntoView();
 }
-onglets.forEach((o, i) => {
-  o.addEventListener('click', () => choisit(o));
-  o.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); choisit(onglets[(i + (e.key === 'ArrowRight' ? 1 : -1) + onglets.length) % onglets.length], true); }
-  });
-});
-placeIndic();
-addEventListener('resize', placeIndic);
-if (document.fonts) document.fonts.ready.then(placeIndic);
-
-const PRIX = { courte: 120, pub: 220, presentation: 380 }, SEANCE = 190, PACKS = { 4: 480, 6: 740, 8: 990 };
-const NOMS_ARTICLES = { courte: 'vidéo courte', pub: 'publicité', presentation: 'vidéo de présentation' };
-const qte = { courte: 0, pub: 0, presentation: 0 };
-const totalEl = $('#total'), acompteEl = $('#acompte'), noteEl = $('#calcul-note'), devisEl = $('#demande-devis');
-const barreEl = $('#calcul-barre'), recapEl = $('#recap-lignes');
-const NOMS_PLURIEL = { courte: 'vidéos courtes', pub: 'publicités', presentation: 'vidéos de présentation' };
-let totalAffiche = 0;
-function tween(el, de, a) {
-  if (reduit) { el.textContent = nombre(a); return; }
-  const dep = performance.now();
-  const f = t => { const k = sortie(borne((t - dep) / 550, 0, 1)); el.textContent = nombre(vers(de, a, k)); if (k < 1) requestAnimationFrame(f); };
-  requestAnimationFrame(f);
-}
-function calcule() {
-  if (!totalEl) return;
-  const n = qte.courte + qte.pub + qte.presentation;
-  let courtes = qte.courte, note = '';
-  if (qte.pub === 0 && qte.presentation === 0 && courtes > 0 && courtes < 3) { courtes = 3; note = 'Les vidéos courtes seules se commandent par <b>3 au minimum</b>&#8239;: le total en compte 3.'; }
-  const total = n === 0 ? 0 : SEANCE + courtes * PRIX.courte + qte.pub * PRIX.pub + qte.presentation * PRIX.presentation;
-  const nv = Math.max(n, courtes + qte.pub + qte.presentation);
-  if (!note && qte.presentation === 0 && qte.pub <= 1 && nv >= 4 && nv <= 8) {
-    const pack = nv <= 4 ? 4 : nv <= 6 ? 6 : 8, prix = PACKS[pack];
-    if (prix < total) note = `Le même volume chaque mois&#8239;: <b>pack ${pack} à ${prix}&nbsp;€</b>, séance offerte.`;
-  }
-  tween(totalEl, totalAffiche, total); totalAffiche = total;
-  acompteEl.textContent = nombre(total / 2);
-  noteEl.innerHTML = note;
-  /* Le détail du devis : chaque ligne explique le total */
-  if (barreEl) barreEl.classList.toggle('vide', n === 0);
-  if (recapEl) {
-    recapEl.textContent = '';
-    if (n > 0) {
-      const ligne = (lib, montant) => { const li = document.createElement('li'); const a = document.createElement('span'), b = document.createElement('span'); a.textContent = lib; b.textContent = `${nombre(montant)} €`; li.append(a, b); recapEl.appendChild(li); };
-      ligne('La séance de tournage', SEANCE);
-      Object.keys(qte).forEach(k => { const q = k === 'courte' ? courtes : qte[k]; if (q > 0) ligne(`${q} ${q > 1 ? NOMS_PLURIEL[k] : NOMS_ARTICLES[k]} × ${PRIX[k]} €`, q * PRIX[k]); });
-    }
-  }
-  Object.keys(qte).forEach(k => {
-    const ligne = $(`.ligne-calcul[data-type="${k}"]`);
-    $('output', ligne).textContent = qte[k];
-    $('[data-moins]', ligne).disabled = qte[k] === 0;
-    $('[data-plus]', ligne).disabled = qte[k] >= 8;
-  });
-  if (devisEl) {
-    const lignes = Object.keys(qte).filter(k => (k === 'courte' ? courtes : qte[k]) > 0).map(k => `- ${k === 'courte' ? courtes : qte[k]} × ${NOMS_ARTICLES[k]}`);
-    const corps = `Bonjour Kevin,\n\nJe souhaite un devis à l'occasion :\n- 1 séance de tournage (190 €)\n${lignes.join('\n')}\nTotal indiqué sur le site : ${nombre(total)} €.\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\n\nMerci.`;
-    devisEl.href = lienMail('Demande de devis · LANCES Productions', corps);
-  }
-}
-$$('.ligne-calcul').forEach(l => {
-  const k = l.dataset.type;
-  $('[data-moins]', l).addEventListener('click', () => { qte[k] = Math.max(0, qte[k] - 1); calcule(); });
-  $('[data-plus]', l).addEventListener('click', () => { qte[k] = Math.min(8, qte[k] + 1); calcule(); });
-});
-calcule();
-
-/* Comparatif « Tout ce qui est compris » : replié par défaut */
-const voirCmp = $('#voir-comparatif'), cmp = $('#comparatif');
-if (voirCmp && cmp) voirCmp.addEventListener('click', () => { const ouvre = cmp.hidden; cmp.hidden = !ouvre; voirCmp.setAttribute('aria-expanded', ouvre ? 'true' : 'false'); voirCmp.firstChild.textContent = ouvre ? 'Masquer le détail ' : 'Voir tout ce qui est compris '; if (ouvre) $$('[data-revele]', cmp).forEach(el => el.classList.add('visible')); });
-
-/* Devis types : l'e-mail pré-rempli reprend la carte */
-$$('[data-devis-mail]').forEach(a => {
-  const carte = a.closest('.devis');
-  const compo = $$('.devis-compo li', carte).map(li => `- ${li.textContent.replace(/\u202f/g, ' ')}`).join('\n');
-  const corps = `Bonjour Kevin,\n\nJe souhaite ce devis : ${$('h4', carte).textContent}\n${compo}\nPrix indiqué sur le site : ${$('.devis-prix', carte).dataset.prixTexte}.\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\n\nMerci.`;
-  a.href = lienMail(`Devis : ${$('h4', carte).textContent} · LANCES Productions`, corps);
-});
-
-/* Un lien vers un panneau (#sur-mesure) ouvre son onglet */
-function ouvrePanneau(panneau) {
-  const o = onglets.find(x => x.getAttribute('aria-controls') === panneau.id);
-  if (o) choisit(o);
-}
-if (location.hash === '#sur-mesure' && $('#sur-mesure')) ouvrePanneau($('#sur-mesure'));
-
-/* =========================================================
-   12 bis. Sur mesure : l'assistant (questions, proposition, date, envoi)
-   Rien ne quitte l'appareil avant que le visiteur envoie son e-mail.
-   ========================================================= */
-const assistant = $('#assistant'), formQ = $('#questionnaire');
-if (assistant && formQ) {
-  const ecrans = $$('[data-ecran]', assistant);
-  const PARCOURS = {
-    estimation: ['choix', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'proposition', 'date', 'envoi'],
-    contact: ['choix', 'date', 'q6', 'envoi']
+const briques = $$('.brique'), phrase = $('#compo-phrase');
+if (briques.length && phrase) {
+  const VIDE = phrase.textContent, choisies = new Set();
+  const mail = $('#compo-mail'), rdv = $('#compo-rdv');
+  const enumere = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}`;
+  const demande = () => {
+    const noms = briques.filter(b => choisies.has(b)).map(b => b.dataset.brique);
+    if (!noms.length) return '';
+    const r = $('input[name="rythme"]:checked'), t = enumere(noms);
+    return `${t.charAt(0).toUpperCase()}${t.slice(1)}${r && r.value ? `, ${r.value}` : ''}.`;
   };
-  const AUTO = ['q1', 'q2', 'q4', 'q5'];
-  let parcours = 'estimation', courant = 'choix', prop = null, ajuste = false;
-  const coche = n => $(`input[name="${n}"]:checked`, formQ);
-  const val = n => { const i = coche(n); return i ? i.value : ''; };
-  const lib = n => { const i = coche(n); return i ? i.nextElementSibling.textContent.replace(/ /g, ' ') : ''; };
-  const champ = n => (formQ.elements[n] ? formQ.elements[n].value.trim() : '');
-  const euros = n => `${nombre(n)} €`;
-  const jour = formQ.elements.jour;
-  const iso = d => `${d.getFullYear()}-${deux(d.getMonth() + 1)}-${deux(d.getDate())}`;
-  const demain = () => { const d = new Date(); d.setDate(d.getDate() + 1); return iso(d); };
-  if (jour) jour.min = demain();
-  if (LIENS.rdv) $$('.agenda', assistant).forEach(p => { p.hidden = false; });
-
-  function piloteOuvert() { return Date.now() < Date.parse(PILOTE.fin) && PILOTE.placesRestantes > 0; }
-
-  /* La formule proposée : la grille de prix, jamais un prix inventé.
-     Testée sur les 144 combinaisons de réponses (4 profils × 3 situations × 6 priorités × 2 rythmes). */
-  const MOT = m => new RegExp(`(^|[^a-zà-ÿ])(${m})([^a-zà-ÿ]|$)`);
-  function propose() {
-    const profil = val('profil'), stade = val('stade'), prio = val('priorite'), mensuel = val('rythme') === 'mensuel';
-    const mots = champ('besoin').toLowerCase();
-    const horsGrille = profil === 'autre' || /youtube|vlog|podcast|interview|aftermovie|documentaire|mariage|marathon|tournoi|comp[ée]tition|[ée]v[ée]nement|s[ée]minaire/.test(mots) || MOT('films?|clips?|galas?|courses?|trails?').test(mots);
-    const lieu = profil === 'salle' || (profil === 'prof' && prio === 'salle');
-    const fixe = (montant, suite) => ({ html: `<b>${euros(montant)}</b>${suite || ''}`, texte: `${euros(montant)}${suite || ''}` });
-    const surDevis = t => ({ html: `<b>Sur devis</b> ${t}`, texte: `sur devis ${t}` });
-    const notes = [];
-    const pack4 = pour => ({ pour, titre: 'Pack 4 · Image & régularité', compo: ['4 vidéos par mois, séance de 3 h offerte', 'Brainstorming d’1 h au démarrage, bilan écrit chaque mois', 'Une vidéo par mois peut devenir une publicité'], prix: fixe(PACKS[4], ' par mois'), pack4: true });
-    const pack6 = pour => ({ pour, titre: 'Pack 6 · Stratégie & audience', compo: ['6 vidéos par mois, séance de 4 h offerte', 'Module Stratégie de contenu compris : analyse mensuelle de votre domaine, 8 idées avec accroche', 'Deux vidéos en publicité, ou une en présentation (compte pour deux)'], prix: fixe(PACKS[6], ' par mois') });
-    const troisCourtes = (pour, conseil) => ({ pour, titre: 'Trois vidéos courtes', compo: ['La séance de tournage', '3 vidéos courtes : reels, témoignages, coulisses'], prix: fixe(SEANCE + 3 * PRIX.courte), conseil });
-    let r;
-    const youtubeMensuel = mensuel && /youtube|vid[ée]o longue|format long|podcast/.test(mots);
-    if (youtubeMensuel) r = { pour: 'Des formats courts chaque semaine et une vidéo YouTube chaque mois', titre: 'Direction de contenu', compo: ['8 vidéos courtes par mois, 2 séances de 4 h', 'Une vidéo YouTube chaque mois, jusqu’à 12 min', 'Modules Stratégie de contenu et Pilotage compris'], prix: surDevis('après l’appel') };
-    else if (horsGrille) r = { pour: 'Projet sur mesure', titre: 'Production sur mesure', compo: ['Écriture, tournage et montage adaptés à votre projet', 'Format, durée et finition fixés ensemble à l’appel'], prix: surDevis('sous 48 h après l’appel') };
-    else if (prio === 'images') r = { pour: 'Vous montez vous-même', titre: mensuel ? 'Le tournage seul, chaque mois' : 'Le tournage seul', compo: [mensuel ? 'Une séance de tournage par mois, avec le matériel' : 'Une séance de tournage avec le matériel', 'Vos rushs triés, prêts à monter'], prix: surDevis('après l’appel') };
-    else if (lieu) {
-      if (mensuel) {
-        r = { pour: 'Salle, studio ou école, chaque mois', titre: 'Pack 8 · Pilotage & sérénité', compo: ['8 vidéos par mois : coachs, cours, ambiance', 'Six heures de tournage par mois, offertes', 'Modules Stratégie de contenu et Pilotage compris'], prix: fixe(PACKS[8], ' par mois') };
-        if (prio === 'image') notes.push(`La vidéo de présentation de votre salle s’ajoute pour ${euros(PRIX.presentation)} le premier mois, sans nouvelle séance.`);
-      }
-      else if (prio === 'prospects') r = { pour: 'Faire venir de nouveaux adhérents', titre: 'Présentation + publicité', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle', 'Une publicité, 2 accroches'], prix: fixe(SEANCE + PRIX.presentation + PRIX.pub) };
-      else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Vidéo de présentation', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle, 2 min'], prix: fixe(SEANCE + PRIX.presentation) };
-      else if (prio === 'regulier') r = troisCourtes('Du contenu d’avance', `Pour publier chaque semaine, le pack 8 revient moins cher par vidéo : ${euros(PACKS[8])} par mois, séance offerte.`);
-      else r = { pour: 'Montrer votre salle', titre: 'Présentation + 3 vidéos courtes', compo: ['La séance de tournage', 'Une vidéo de présentation de votre salle', '3 vidéos courtes : coachs, cours, ambiance'], prix: fixe(SEANCE + PRIX.presentation + 3 * PRIX.courte) };
-    } else if (mensuel) {
-      if (stade !== 'lance' && prio === 'prospects') r = pack6('Attirer plus de prospects');
-      else if (stade !== 'lance' && prio === 'regulier') r = pack6('Publier sans y passer du temps');
-      else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Pack 4 + présentation', compo: ['4 vidéos par mois, séance de 3 h offerte', 'Une vidéo de présentation en plus le premier mois, avec sa version courte'], prix: fixe(PACKS[4] + PRIX.presentation, ` le premier mois, puis ${euros(PACKS[4])} par mois`), pack4: true };
-      else r = pack4(stade === 'lance' ? 'Pour lancer votre activité' : 'Une vidéo par semaine');
-    } else {
-      if (prio === 'prospects') r = { pour: 'Attirer plus de prospects', titre: 'Deux publicités', compo: ['La séance de tournage', '2 publicités, 2 accroches chacune, deux formats, texte d’annonce et droits compris'], prix: fixe(SEANCE + 2 * PRIX.pub) };
-      else if (prio === 'image') r = { pour: 'Une image plus professionnelle', titre: 'Vidéo de présentation', compo: ['La séance de tournage', 'Une vidéo de présentation, jusqu’à 2 min 30, avec sa version courte de 30 s', 'Pour votre page de rendez-vous, votre bio, votre épinglé, YouTube'], prix: fixe(SEANCE + PRIX.presentation) };
-      else if (prio === 'regulier') r = troisCourtes('Du contenu d’avance', `Pour publier chaque semaine, le pack 4 revient moins cher : ${euros(PACKS[4])} par mois, séance offerte.`);
-      else r = { pour: 'Se présenter et se faire connaître', titre: 'Présentation + publicité', compo: ['La séance de tournage', 'Une vidéo de présentation', 'Une publicité, 2 accroches'], prix: fixe(SEANCE + PRIX.presentation + PRIX.pub) };
-    }
-    if (r.conseil) notes.push(r.conseil);
-    /* La réponse libre : ce que le visiteur cite et que la formule n'a pas */
-    if (!horsGrille && prio !== 'images') {
-      const a = re => r.compo.some(c => re.test(c));
-      if (/pr[ée]sent/.test(mots) && !a(/présentation/i)) notes.push(`Vous citez une vidéo de présentation : elle s’ajoute pour ${euros(PRIX.presentation)}, sans nouvelle séance.`);
-      if ((/publicit/.test(mots) || MOT('pubs?').test(mots)) && !a(/publicit/i)) notes.push(`Vous citez la publicité : chaque publicité s’ajoute pour ${euros(PRIX.pub)}, 2 accroches comprises.`);
-    }
-    if (piloteOuvert() && r.pack4) notes.push(`Offre de fin d’année : le premier mois du pack 4 à ${euros(PACKS[4] * .8)} au lieu de ${euros(PACKS[4])}, sans engagement, pour un contrat signé au plus tard le 30 novembre.`);
-    if (piloteOuvert() && r.titre.startsWith('Pack 8')) notes.push('Offre de fin d’année : le premier mois sans engagement, pour un contrat signé au plus tard le 30 novembre.');
-    if (prio === 'sais_pas') notes.push('Vous hésitez encore : on affine la formule ensemble pendant l’appel.');
-    r.note = notes.join('\n');
-    return r;
-  }
-  function afficheProposition() {
-    prop = propose();
-    $('#prop-pour').textContent = prop.pour;
-    $('#prop-titre').textContent = prop.titre;
-    const ul = $('#prop-compo'); ul.textContent = '';
-    prop.compo.forEach(c => { const li = document.createElement('li'); li.textContent = c; ul.appendChild(li); });
-    $('#prop-prix').innerHTML = prop.prix.html;
-    const note = $('#prop-note'); note.hidden = !prop.note; note.textContent = prop.note || '';
-    $('.ajuster', assistant).hidden = true; ajuste = false;
-  }
-
-  /* Validation de l'écran en cours */
-  function erreur(ec, msg, champFautif) {
-    const e = $('.q-erreur', ec); e.textContent = msg; e.hidden = false;
-    if (champFautif) { champFautif.setAttribute('aria-invalid', 'true'); champFautif.focus(); }
-    return false;
-  }
-  function valide(id) {
-    const ec = ecrans.find(e => e.dataset.ecran === id);
-    $$('[aria-invalid]', ec).forEach(c => c.removeAttribute('aria-invalid'));
-    if (AUTO.includes(id)) { const n = $('input[type="radio"]', ec).name; return coche(n) ? true : erreur(ec, 'Choisissez une réponse.'); }
-    if (id === 'q6') {
-      const f = formQ.elements;
-      if (!champ('prenom')) return erreur(ec, 'Indiquez votre prénom.', f.prenom);
-      if (!champ('email') && !champ('tel')) return erreur(ec, 'Indiquez un e-mail ou un téléphone.', f.email);
-      if (champ('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(champ('email'))) return erreur(ec, 'Cet e-mail semble incomplet.', f.email);
-      if (champ('tel') && champ('tel').replace(/\D/g, '').length < 9) return erreur(ec, 'Ce numéro semble incomplet.', f.tel);
-    }
-    if (id === 'date') {
-      if (!jour.value || jour.value < demain()) return erreur(ec, 'Choisissez un jour à partir de demain.', jour);
-      if (!coche('creneau')) return erreur(ec, 'Choisissez un créneau.');
-      if (!coche('moyen')) return erreur(ec, 'Téléphone ou visio ?');
-    }
-    return true;
-  }
-
-  /* Navigation entre les écrans */
-  function montre(id, focus = true) {
-    courant = id;
-    assistant.classList.toggle('mode-contact', parcours === 'contact');
-    if (id === 'q4') {
-      const opt = $('input[name="priorite"][value="salle"]', formQ), coach = val('profil') === 'coach';
-      opt.closest('label').hidden = coach;
-      if (coach && opt.checked) opt.checked = false;
-    }
-    if (id === 'proposition') afficheProposition();
-    if (id === 'envoi') prepareEnvoi();
-    let actif = null;
-    ecrans.forEach(e => {
-      const on = e.dataset.ecran === id;
-      e.hidden = !on;
-      if (on) { actif = e; $$('.q-erreur', e).forEach(x => { x.hidden = true; }); if (!reduit) { e.classList.remove('arrive'); void e.offsetWidth; e.classList.add('arrive'); } }
+  const maj = () => {
+    const d = demande();
+    phrase.textContent = d || VIDE; phrase.classList.toggle('vide', !d);
+    if (mail) mail.href = lienMail('Ma demande · LANCES Productions', `Bonjour Kevin,\n\nMa demande : ${d || '[ce dont j’ai besoin]'}\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\n\nMerci.`);
+    if (rdv && LIENS.rdv && LIENS.rdvDemande) rdv.href = d ? `${LIENS.rdv}?a1=${encodeURIComponent(d)}` : LIENS.rdv;
+  };
+  briques.forEach(b => {
+    const bouton = $('.brique-plus', b);
+    if (!bouton) return;
+    bouton.addEventListener('click', () => {
+      const oui = !choisies.has(b);
+      if (oui) choisies.add(b); else choisies.delete(b);
+      b.classList.toggle('choisie', oui);
+      bouton.setAttribute('aria-pressed', String(oui));
+      $('span', bouton).textContent = oui ? 'Dans ma demande' : 'Ajouter à ma demande';
+      maj();
     });
-    if (!focus || !actif) return;
-    const t = $('[tabindex="-1"]', actif); if (t) t.focus({ preventScroll: true });
-    const r = assistant.getBoundingClientRect();
-    if (r.top < 0 || r.top > innerHeight * .7) assistant.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' });
-  }
-  const etape = d => { const p = PARCOURS[parcours], i = p.indexOf(courant); if (p[i + d]) montre(p[i + d]); };
-
-  formQ.addEventListener('submit', e => { e.preventDefault(); if (valide(courant)) etape(1); });
-  formQ.addEventListener('change', e => {
-    const n = e.target.name;
-    if (e.target.type === 'radio' && AUTO.includes(courant) && $(`[data-ecran="${courant}"] input[name="${n}"]`, assistant)) { const ici = courant; setTimeout(() => { if (courant === ici && valide(ici)) etape(1); }, reduit ? 0 : 280); }
   });
-  formQ.addEventListener('input', e => { e.target.removeAttribute('aria-invalid'); });
-  assistant.addEventListener('click', e => {
-    const b = e.target.closest('button');
-    if (!b) return;
-    if (b.dataset.commence) { parcours = b.dataset.commence; montre(PARCOURS[parcours][1]); }
-    else if (b.hasAttribute('data-retour')) etape(-1);
-    else if (b.hasAttribute('data-remplit')) { const t = formQ.elements.besoin; t.value = b.textContent; t.focus(); }
-    else if (b.hasAttribute('data-ajuster')) { $('.ajuster', assistant).hidden = false; formQ.elements.remarque.focus(); }
-    else if (b.hasAttribute('data-modifie')) montre('q1');
-    else if (b.hasAttribute('data-confirme')) { ajuste = !!b.closest('.ajuster'); montre('date'); }
-    else if (b.hasAttribute('data-recommence')) { formQ.reset(); parcours = 'estimation'; prop = null; $('.envoye', assistant).hidden = true; montre('choix'); }
-  });
-
-  /* Le récapitulatif et l'e-mail */
-  function lignes() {
-    const l = [];
-    if (parcours === 'estimation') {
-      l.push(['Profil', lib('profil')], ['Où j’en suis', lib('stade')], ['Besoin', champ('besoin') || '—'], ['Priorité', lib('priorite')], ['Rythme', lib('rythme')]);
-      if (prop) l.push(['Formule proposée', `${prop.titre} · ${prop.prix.texte}${ajuste ? ' (à ajuster)' : ''}`]);
-      if (ajuste && champ('remarque')) l.push(['Remarque', champ('remarque')]);
-    }
-    const d = jour.value ? new Date(`${jour.value}T12:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
-    l.push(['Appel de 30 min', `${d} · ${lib('creneau')} · ${lib('moyen')}`]);
-    l.push(['Prénom', champ('prenom')]);
-    if (champ('email')) l.push(['E-mail', champ('email')]);
-    if (champ('tel')) l.push(['Téléphone', champ('tel')]);
-    if (champ('instagram')) l.push(['Instagram', champ('instagram')]);
-    return l;
-  }
-  function prepareEnvoi() {
-    const l = lignes(), dl = $('#recap');
-    dl.textContent = '';
-    l.forEach(([k, v]) => { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); });
-    const intro = parcours === 'estimation' ? 'Voici mon estimation faite sur le site.' : 'Je souhaite être contacté.';
-    const corps = `Bonjour Kevin,\n\n${intro}\n\n${l.map(([k, v]) => `${k} : ${v}`).join('\n')}\n\nMerci.`;
-    const sujet = `${parcours === 'estimation' ? 'Demande sur mesure' : 'Demande d’appel'} · ${champ('prenom')} · LANCES Productions`;
-    $('#envoi-demande').href = lienMail(sujet, corps);
-  }
-  $('#envoi-demande').addEventListener('click', () => { setTimeout(() => { $('.envoye', assistant).hidden = false; }, 1200); });
-
-  montre('choix', false);
+  $$('input[name="rythme"]').forEach(i => i.addEventListener('change', maj));
+  maj();
 }
 
 /* =========================================================
-   13. Offre de fin d’année (tarif de lancement des CGV) : compte à rebours et places (vérité datée)
+   13. Tarif de lancement : les places (vérité datée)
    ========================================================= */
-const FIN_PILOTE = Date.parse(PILOTE.fin);
-const cases = { j: $('[data-u="j"]'), h: $('[data-u="h"]'), m: $('[data-u="m"]'), s: $('[data-u="s"]') };
-const placesTexte = $('#places-texte'), pilote = $('#pilote');
-if (placesTexte) {
-  const r = PILOTE.placesRestantes, t = PILOTE.placesTotal;
-  placesTexte.textContent = r > 0
-    ? `${t} place${t > 1 ? 's' : ''} au total, il en reste ${r} (mis à jour le ${dateFr(PILOTE.majPlaces)})`
-    : `Les ${t} places sont prises (mis à jour le ${dateFr(PILOTE.majPlaces)})`;
-  $$('.places i').forEach((i, k) => { i.style.opacity = k < r ? '1' : '.3'; });
-}
-function majCompte() {
-  if (!cases.j) return;
-  const r = Math.max(0, FIN_PILOTE - Date.now());
-  if (r === 0 || PILOTE.placesRestantes <= 0) {
-    if (pilote && !pilote.classList.contains('clos')) {
-      pilote.classList.add('clos');
-      $$('[data-pilote-ouvert]', pilote).forEach(el => { el.hidden = true; });
-      $$('[data-pilote-clos]', pilote).forEach(el => { el.hidden = false; });
-    }
-    if (r === 0) return;
+const lancement = $('#lancement'), placesTexte = $('#places-texte');
+if (lancement) {
+  const r = LANCEMENT.placesRestantes, t = LANCEMENT.placesTotal;
+  const clos = r <= 0 || (LANCEMENT.fin && Date.now() > Date.parse(LANCEMENT.fin));
+  if (clos) lancement.hidden = true;
+  else if (placesTexte) {
+    placesTexte.textContent = `${t} place${t > 1 ? 's' : ''}, il en reste ${r} (au ${dateFr(LANCEMENT.majPlaces)})`;
+    $$('.places i', lancement).forEach((i, k) => { i.style.opacity = k < r ? '1' : '.3'; });
   }
-  const v = { j: Math.floor(r / 864e5), h: Math.floor(r / 36e5) % 24, m: Math.floor(r / 6e4) % 60, s: Math.floor(r / 1e3) % 60 };
-  Object.keys(v).forEach(k => {
-    const t = deux(v[k]);
-    if (cases[k] && cases[k].textContent !== t) {
-      cases[k].textContent = t;
-      if (!reduit) { cases[k].classList.remove('tic'); void cases[k].offsetWidth; cases[k].classList.add('tic'); }
-    }
-  });
 }
-majCompte(); if (cases.j) setInterval(majCompte, 1000);
 
 /* =========================================================
    14. Le clap

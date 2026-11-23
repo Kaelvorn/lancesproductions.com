@@ -469,7 +469,6 @@ body.menu-ouvert{overflow:hidden}
 .lanc-rec::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--rouge);box-shadow:0 0 8px rgba(240,86,42,.6);animation:rec 1.6s steps(1) infinite}
 .lanc-chiffre{display:flex;align-items:flex-start;font-family:var(--f-titre);font-weight:800;font-size:clamp(5.4rem,3.4rem + 7.4vw,10rem);line-height:.8;font-variant-numeric:tabular-nums}
 .lanc-chiffre small{font-size:.4em;line-height:1;margin:.08em 0 0 .08em;color:var(--gris)}
-.lanc-lance{display:block;width:min(78%,300px);height:16px;margin-top:-4px;background:linear-gradient(90deg,var(--rouge-profond),var(--rouge) 60%,var(--or));clip-path:polygon(0 68%,0 100%,24% 100%,100% 0);filter:drop-shadow(0 0 10px rgba(240,86,42,.45))}
 .lanc-ecran .places{margin-top:6px;flex-wrap:wrap;justify-content:center;text-align:center}
 .places{display:flex;align-items:center;gap:10px;color:var(--gris);font-size:.88rem}
 .places i{flex:none;width:30px;height:10px;background:linear-gradient(90deg,var(--rouge-profond),var(--rouge) 60%,var(--or));clip-path:polygon(0 66%,0 100%,24% 100%,100% 0)}

@@ -554,7 +554,7 @@ if (briques.length && phrase) {
   const mail = $('#compo-mail'), rdv = $('#compo-rdv');
   const enumere = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}`;
   const demande = () => {
-    const noms = briques.filter(b => choisies.has(b)).map(b => b.dataset.brique);
+    const noms = briques.filter(b => choisies.has(b)).flatMap(b => b.dataset.brique.split(' et '));
     if (!noms.length) return '';
     const r = $('input[name="rythme"]:checked'), t = enumere(noms);
     return `${t.charAt(0).toUpperCase()}${t.slice(1)}${r && r.value ? `, ${r.value}` : ''}.`;

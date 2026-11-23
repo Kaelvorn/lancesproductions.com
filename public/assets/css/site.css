@@ -328,6 +328,18 @@ body.menu-ouvert{overflow:hidden}
   .regle span{display:none}
   .montage-pied{display:none}
 }
+/* Téléphone : sept clips sont trop étroits pour des mots. Les clips portent le numéro
+   de l'étape, la piste des titres devient une ligne de repères, et le nom de l'étape
+   en cours s'écrit sous les pistes. */
+@media (max-width:900px){
+  .piste:not(.piste-image) .piste-zone:not(.onde){height:10px}
+  .clip-titre{font-size:0;padding:0;top:2px;bottom:2px;border-radius:3px}
+  .piste-image .piste-zone{height:40px;counter-reset:clip}
+  .clip-v1{counter-increment:clip;font-size:0;padding:0;align-items:center;justify-content:center}
+  .clip-v1::after{content:counter(clip,decimal-leading-zero);font-family:var(--f-titre);font-weight:800;font-size:.9rem;line-height:1;letter-spacing:.04em}
+  .montage-pied{display:flex;margin-top:8px;padding-top:7px}
+  .montage-pied .hud:first-child{color:var(--parchemin)}
+}
 
 /* Formats */
 .formats-grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,2.4vw,32px)}

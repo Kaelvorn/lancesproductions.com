@@ -29,7 +29,7 @@ Tout ce qui change dans la vie du site est en tête de `public/assets/js/site.js
 - `LIENS.rdvDemande` : `true` quand la page Calendly a pour première question « Votre demande » ; les briques cochées dans l'offre la remplissent alors d'avance. `false` : rien n'est transmis.
 - `LANCEMENT` : places du tarif de lancement (total, restantes, date de mise à jour) et, si besoin, une date de fin. À zéro place, ou la date passée, le bandeau disparaît seul.
 
-Les textes sont dans les fichiers HTML. **La page n'affiche aucun prix** (offre à la carte, sur devis) : la grille de prix reste dans le dépôt du copilote (`livrables/offre-a-la-carte/`), jamais ici. Ce que la page promet (retouches, délais, tarif de lancement) doit rester ce que disent les CGV.
+Les textes sont dans les fichiers HTML. **La page n'affiche aucun prix** (offre souple, sur devis) : la grille de prix reste dans le dépôt du copilote (`livrables/offre-a-la-carte/`), jamais ici. Ce que la page promet (retouches, délais, tarif de lancement) doit rester ce que disent les CGV.
 
 ## Mise en ligne
 

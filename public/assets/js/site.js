@@ -24,14 +24,16 @@ const LIENS = {
      false : le bouton ouvre la page Calendly sans rien transmettre. */
   rdvDemande: false
 };
-/* Tarif de lancement (CGV art. 2) : les trois premières collaborations au mois.
-   placesRestantes à 0, ou la date de fin passée : le bandeau disparaît seul.
-   fin : vide (seul le nombre de places compte), ou une date comme '2027-01-31T23:59:59+01:00'. */
+/* Tarif de lancement (CGV art. 2) : les trois premières collaborations au mois,
+   pour un contrat signé au plus tard à la date de fin. placesRestantes à 0, ou la
+   date passée : la fiche et les phrases marquées data-lancement disparaissent seules.
+   Ne pas repousser la date sans décision de Kevin et CGV à jour (une échéance
+   repoussée devient une fausse urgence). */
 const LANCEMENT = {
   placesTotal: 3,
   placesRestantes: 3,
-  majPlaces: '2026-11-03',
-  fin: ''
+  majPlaces: '2026-11-23',
+  fin: '2026-11-30T23:59:59+01:00'
 };
 
 /* =========================================================
@@ -586,7 +588,7 @@ const lancement = $('#lancement'), placesTexte = $('#places-texte');
 if (lancement) {
   const r = LANCEMENT.placesRestantes, t = LANCEMENT.placesTotal;
   const clos = r <= 0 || (LANCEMENT.fin && Date.now() > Date.parse(LANCEMENT.fin));
-  if (clos) lancement.hidden = true;
+  if (clos) { lancement.hidden = true; $$('[data-lancement]').forEach(el => { el.hidden = true; }); }
   else if (placesTexte) {
     placesTexte.textContent = `${t} place${t > 1 ? 's' : ''}, il en reste ${r} (au ${dateFr(LANCEMENT.majPlaces)})`;
     $$('.places i', lancement).forEach((i, k) => { i.style.opacity = k < r ? '1' : '.3'; });

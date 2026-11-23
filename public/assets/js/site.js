@@ -446,7 +446,7 @@ if (piste) {
    ========================================================= */
 const montage = $('#montage'), etapes = $$('.etape'), clipsV1 = $$('.clip-v1'), clipsV2 = $$('.clip-titre');
 const onde = $('#onde'), mtc = $('#montage-tc'), metape = $('#montage-etape');
-const NOMS = ['Analyse', 'Textes', 'Séance', 'Montage', 'Livraison', 'Pilotage'];
+const NOMS = ['Demande', 'Appel', 'Devis', 'Préparation', 'Images', 'Montage', 'Pilotage'];
 let barresOnde = [], pMontage = 0, etapeActive = -1;
 $$('.clip').forEach(c => { c.style.setProperty('--de', c.dataset.de); c.style.setProperty('--a', c.dataset.a); });
 if (onde) {
@@ -460,7 +460,7 @@ if (onde) {
     onde.appendChild(b); barresOnde.push(b);
   }
 }
-/* Le moniteur montre l'étape en cours : ce que je fais par défaut, ce qu'on peut faire ensemble */
+/* Le moniteur montre l'étape en cours : ce que je fais, ce que le client fait */
 const moniteur = {
   corps: $('#mon-corps'), n: $('#mon-n'), meta: $('#mon-meta'),
   titre: $('#mon-titre'), defaut: $('#mon-defaut'), ensemble: $('#mon-ensemble')
@@ -489,13 +489,13 @@ function majMontage(rects) {
     etapeActive = idx;
     etapes.forEach((e, i) => e.classList.toggle('actif', i === idx));
     clipsV1.forEach((c, i) => c.classList.toggle('actif', i === idx));
-    if (metape) metape.textContent = `Étape ${idx + 1} sur 6 · ${NOMS[idx]}`;
+    if (metape) metape.textContent = `Étape ${idx + 1} sur ${etapes.length} · ${NOMS[idx]}`;
     majMoniteur(etapes[idx], idx);
   }
-  clipsV2.forEach(c => { const de = +c.dataset.de / 6, a = +c.dataset.a / 6; c.classList.toggle('actif', pMontage >= de && pMontage < a); });
+  clipsV2.forEach(c => { const de = +c.dataset.de / etapes.length, a = +c.dataset.a / etapes.length; c.classList.toggle('actif', pMontage >= de && pMontage < a); });
   const nb = Math.floor(pMontage * barresOnde.length);
   barresOnde.forEach((b, i) => b.classList.toggle('lu', i < nb));
-  if (mtc) mtc.textContent = formatTc(pMontage * 120);
+  if (mtc) mtc.textContent = formatTc(pMontage * 20 * etapes.length);
 }
 
 /* =========================================================

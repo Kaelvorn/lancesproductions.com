@@ -566,7 +566,7 @@ if (briques.length && phrase) {
       li.classList.toggle('on', on);
     });
     if (mini) {
-      if (compte) compte.textContent = n ? `· ${n} brique${n > 1 ? 's' : ''}` : '· ajoutez une brique';
+      if (compte) compte.textContent = n ? `· ${n} sur ${briques.length}` : '· vide pour l’instant';
       mini.classList.toggle('pleine', n > 0);
       if (aller) aller.hidden = !n;
     }

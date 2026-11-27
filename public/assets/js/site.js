@@ -552,6 +552,22 @@ const briques = $$('.brique'), phrase = $('#compo-phrase');
 if (briques.length && phrase) {
   const VIDE = phrase.textContent, choisies = new Set();
   const mail = $('#compo-mail'), rdv = $('#compo-rdv');
+  /* Téléphone et tablette : le bandeau collé au-dessus des briques montre la demande en cours */
+  const mini = $('#demande-mini'), compte = $('#dm-compte'), aller = $('#dm-aller');
+  const pistesMini = mini ? $$('.dm-pistes li', mini) : [];
+  const majMini = () => {
+    if (!mini) return;
+    const n = choisies.size;
+    pistesMini.forEach(li => {
+      const b = briques.find(x => x.dataset.brique === li.dataset.pour);
+      const on = Boolean(b && choisies.has(b));
+      if (on && !li.classList.contains('on')) { li.classList.remove('vient'); void li.offsetWidth; li.classList.add('vient'); }
+      li.classList.toggle('on', on);
+    });
+    if (compte) compte.textContent = n ? `· ${n} brique${n > 1 ? 's' : ''}` : '· ajoutez une brique';
+    mini.classList.toggle('pleine', n > 0);
+    if (aller) aller.hidden = !n;
+  };
   const enumere = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}`;
   const demande = () => {
     const noms = briques.filter(b => choisies.has(b)).flatMap(b => b.dataset.brique.split(' et '));
@@ -564,6 +580,7 @@ if (briques.length && phrase) {
     phrase.textContent = d || VIDE; phrase.classList.toggle('vide', !d);
     if (mail) mail.href = lienMail('Ma demande · LANCES Productions', `Bonjour Kevin,\n\nMa demande : ${d || '[ce dont j’ai besoin]'}\n\nJe suis [prénom, activité, ville] ; mon compte Instagram ou mon site : [lien].\nMes disponibilités pour un appel de 30 min : [deux créneaux].\n\nMerci.`);
     if (rdv && LIENS.rdv && LIENS.rdvDemande) rdv.href = d ? `${LIENS.rdv}?a1=${encodeURIComponent(d)}` : LIENS.rdv;
+    majMini();
   };
   briques.forEach(b => {
     const bouton = $('.brique-plus', b);

@@ -490,6 +490,26 @@ body.menu-ouvert{overflow:hidden}
 @media (max-width:560px){.lanc-echange{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){.lanc-rec::before{animation:none}}
 @media (max-width:600px){.briques,.niv3-grille{grid-template-columns:minmax(0,1fr)}.brique h3{font-size:1.6rem}}
+/* Téléphone et tablette : la demande en cours reste collée en haut pendant qu'on parcourt
+   les briques (comme la table de montage de la méthode), puis s'en va avec la dernière brique,
+   juste avant le cadre « Votre demande ». Ordinateur : rien, le cadre est déjà en vue. */
+.briques-zone{display:grid;gap:clamp(12px,1.6vw,22px)}
+.demande-mini{display:none}
+@keyframes dm-clip{from{transform:scale(.86);filter:brightness(1.7)}}
+@media (max-width:900px){
+  .demande-mini{display:grid;gap:8px;position:sticky;top:calc(94px + env(safe-area-inset-top,0px));z-index:3;padding:8px 10px 10px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--ligne),0 18px 30px -10px rgba(10,12,15,.95)}
+  .dm-haut{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px;padding-left:2px}
+  .dm-haut .hud{font-size:.6rem;color:var(--gris)}
+  .dm-compte{color:var(--gris-sourd);transition:color .4s}
+  .demande-mini.pleine .dm-compte{color:var(--parchemin)}
+  .dm-aller{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:8px 14px;border-radius:999px;background:var(--parchemin);color:var(--noir);font-family:var(--f-titre);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;animation:monte-doux .5s var(--e-sortie)}
+  .dm-aller i{width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+  .dm-pistes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+  .dm-pistes li{display:flex;align-items:center;justify-content:center;height:30px;padding:0 3px;border-radius:5px;overflow:hidden;font-family:var(--f-titre);font-weight:700;font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;color:var(--gris-sourd);background:rgba(167,179,191,.04);box-shadow:inset 0 0 0 1px rgba(167,179,191,.16);transition:box-shadow .4s,color .4s,background-color .4s}
+  .dm-pistes li.on{color:var(--parchemin);background:linear-gradient(160deg,#3A2A24,#16120F);box-shadow:inset 0 0 0 1px rgba(240,86,42,.75),0 0 18px -6px rgba(240,86,42,.5)}
+  .dm-pistes li.vient{animation:dm-clip .5s var(--e-sortie)}
+}
+@media (max-width:359px){.dm-haut .hud{font-size:.54rem;letter-spacing:.06em}.dm-aller{padding-inline:11px}}
 
 /* Kevin */
 .kevin{overflow:clip}

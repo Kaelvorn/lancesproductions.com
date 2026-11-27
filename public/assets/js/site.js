@@ -557,7 +557,33 @@ if (briques.length && phrase) {
   const pistes = $$('.dm-pistes li[data-pour]');
   /* Le cadre en trois étapes : où en est le visiteur */
   const etat = $('#compo-etat'), lienBriques = $('#ce-lien'), etapes = $$('.ce[data-etape]');
+  /* Étape 1 : le rappel de chaque élément choisi (nom, phrase-clé, détail à déplier),
+     recopié de sa fiche pour ne jamais diverger. Chaque ligne est créée une fois et
+     gardée : elle reste ouverte si le visiteur l'a ouverte. */
+  const recap = $('#recap'), lignes = new Map();
+  const ligne = b => {
+    if (lignes.has(b)) return lignes.get(b);
+    const li = document.createElement('li'), d = document.createElement('details'), s = document.createElement('summary');
+    const nom = document.createElement('b'), role = document.createElement('span'), fleche = document.createElement('i');
+    nom.textContent = $('h3', b).textContent;
+    role.textContent = ($('.brique-role', b) || {}).textContent || '';
+    fleche.setAttribute('aria-hidden', 'true');
+    s.append(nom, role, fleche);
+    d.append(s);
+    const liste = $('.liste-coche', b);
+    if (liste) d.append(liste.cloneNode(true));
+    li.append(d);
+    lignes.set(b, li);
+    return li;
+  };
+  const majRecap = () => {
+    if (!recap) return;
+    const choix = briques.filter(b => choisies.has(b));
+    recap.replaceChildren(...choix.map(ligne));
+    recap.hidden = !choix.length;
+  };
   const majMini = () => {
+    majRecap();
     const n = choisies.size;
     pistes.forEach(li => {
       const b = briques.find(x => x.dataset.brique === li.dataset.pour);

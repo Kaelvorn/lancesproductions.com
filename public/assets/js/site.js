@@ -552,22 +552,38 @@ const briques = $$('.brique'), phrase = $('#compo-phrase');
 if (briques.length && phrase) {
   const VIDE = phrase.textContent, choisies = new Set();
   const mail = $('#compo-mail'), rdv = $('#compo-rdv');
-  /* Téléphone et tablette : le bandeau collé au-dessus des briques montre la demande en cours */
+  /* Les clips des briques : le bandeau collé (téléphone et tablette) et l'étape 1 du cadre */
   const mini = $('#demande-mini'), compte = $('#dm-compte'), aller = $('#dm-aller');
-  const pistesMini = mini ? $$('.dm-pistes li', mini) : [];
+  const pistes = $$('.dm-pistes li[data-pour]');
+  /* Le cadre en trois étapes : où en est le visiteur */
+  const etat = $('#compo-etat'), lienBriques = $('#ce-lien'), etapes = $$('.ce[data-etape]');
   const majMini = () => {
-    if (!mini) return;
     const n = choisies.size;
-    pistesMini.forEach(li => {
+    pistes.forEach(li => {
       const b = briques.find(x => x.dataset.brique === li.dataset.pour);
       const on = Boolean(b && choisies.has(b));
       if (on && !li.classList.contains('on')) { li.classList.remove('vient'); void li.offsetWidth; li.classList.add('vient'); }
       li.classList.toggle('on', on);
     });
-    if (compte) compte.textContent = n ? `· ${n} brique${n > 1 ? 's' : ''}` : '· ajoutez une brique';
-    mini.classList.toggle('pleine', n > 0);
-    if (aller) aller.hidden = !n;
+    if (mini) {
+      if (compte) compte.textContent = n ? `· ${n} brique${n > 1 ? 's' : ''}` : '· ajoutez une brique';
+      mini.classList.toggle('pleine', n > 0);
+      if (aller) aller.hidden = !n;
+    }
+    const fait = { briques: n > 0, rythme: Boolean($('input[name="rythme"]:checked')), appel: false };
+    const enCours = !fait.briques ? 'briques' : !fait.rythme ? 'rythme' : 'appel';
+    etapes.forEach(li => {
+      li.classList.toggle('fait', fait[li.dataset.etape]);
+      li.classList.toggle('encours', li.dataset.etape === enCours);
+    });
+    if (etat) etat.textContent = `· étape ${{ briques: 1, rythme: 2, appel: 3 }[enCours]} sur 3`;
+    if (lienBriques) lienBriques.textContent = n ? 'Modifier' : 'Choisir';
   };
+  /* Le bandeau s'efface quand le cadre arrive : une seule « Votre demande » à l'écran */
+  const cadre = $('#ma-demande');
+  if (mini && cadre && 'IntersectionObserver' in window) {
+    new IntersectionObserver(e => { mini.classList.toggle('cache', e[e.length - 1].isIntersecting); }, { rootMargin: '0px 0px -12% 0px' }).observe(cadre);
+  }
   const enumere = a => a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} et ${a[a.length - 1]}`;
   const demande = () => {
     const noms = briques.filter(b => choisies.has(b)).flatMap(b => b.dataset.brique.split(' et '));

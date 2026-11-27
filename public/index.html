@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/sofia-sans-semi-condensed-800-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/montserrat-400-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css?v=2026-11-27a">
+<link rel="stylesheet" href="/assets/css/site.css?v=2026-11-27b">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"LANCES Productions","slogan":"L'effort, mis en lumière.","description":"Studio vidéo du fitness à Toulouse : vidéos courtes, publicités et vidéos de présentation pour les coachs sportifs, les salles et les studios.","url":"https://lancesproductions.com/","image":"https://lancesproductions.com/og.png","email":"kevinmazin.pro@gmail.com","telephone":"+33698591995","areaServed":{"@type":"City","name":"Toulouse"},"address":{"@type":"PostalAddress","streetAddress":"80 rue Alfred Duméril","addressLocality":"Toulouse","postalCode":"31400","addressCountry":"FR"},"founder":{"@type":"Person","name":"Kevin Mazin"},"sameAs":["https://www.instagram.com/lancesproductions/","https://www.tiktok.com/@lances.productions","https://www.youtube.com/@LANCES-Productions"]}</script>
 </head>
 <body>
@@ -326,7 +326,7 @@
       </div>
 
       <!-- Téléphone et tablette : la demande reste visible en haut pendant qu'on parcourt les briques -->
-      <div class="briques-zone">
+      <div class="briques-zone" id="briques">
       <div class="demande-mini ecran" id="demande-mini">
         <div class="dm-haut">
           <p class="hud">Votre demande <span class="dm-compte" id="dm-compte">· ajoutez une brique</span></p>
@@ -390,24 +390,6 @@
           <button type="button" class="brique-plus" aria-pressed="false"><span>Ajouter à ma demande</span><i aria-hidden="true"></i></button>
         </article>
       </div>
-      </div>
-
-      <div class="compo ecran" id="ma-demande" data-lumiere data-revele>
-        <div class="compo-g">
-          <p class="hud">Votre demande</p>
-          <p class="compo-phrase vide" id="compo-phrase" aria-live="polite">Choisissez une ou plusieurs briques&#8239;: votre demande s’écrit ici.</p>
-          <div class="rythmes" role="radiogroup" aria-label="Rythme">
-            <label class="rythme"><input type="radio" name="rythme" value="une fois"><span>Une fois</span></label>
-            <label class="rythme"><input type="radio" name="rythme" value="chaque mois"><span>Chaque mois</span></label>
-            <label class="rythme"><input type="radio" name="rythme" value="" checked><span>Je ne sais pas encore</span></label>
-          </div>
-        </div>
-        <div class="compo-d">
-          <a class="bouton bouton-plein aimant" href="#contact" data-lien="rdv" id="compo-rdv">Réserver mon appel de 30 min</a>
-          <a class="bouton bouton-trait" href="#contact" id="compo-mail">Envoyer ma demande par e-mail</a>
-          <p class="compo-note">Je ne chiffre rien avant d’avoir compris votre besoin. Devis gratuit, sous 2&nbsp;jours ouvrés après l’appel.</p>
-        </div>
-      </div>
 
       <div class="niv3" data-revele>
         <p class="bloc-titre">Un devis, trois niveaux <small>Le même besoin, trois façons d’y répondre</small></p>
@@ -416,6 +398,37 @@
           <div class="niveau"><span class="hud">Niveau 2</span><b>La cadence</b><span>Le bon rythme&#8239;: la plupart de ce que vous attendez.</span></div>
           <div class="niveau niveau-haut"><span class="hud">Niveau 3</span><b>L’intégrale</b><span>Tout ce que vous avez demandé, et ce qui le rend plus fort.</span></div>
         </div>
+      </div>
+      </div>
+
+      <!-- La demande en trois étapes : on voit où l'on en est, puis on réserve -->
+      <div class="compo ecran" id="ma-demande" data-lumiere data-revele>
+        <p class="hud compo-tete">Votre demande <span class="compo-etat" id="compo-etat">· étape 1 sur 3</span></p>
+        <p class="sr" id="compo-phrase" aria-live="polite">Choisissez une ou plusieurs briques&#8239;: votre demande s’écrit ici.</p>
+        <ol class="compo-etapes">
+          <li class="ce encours" data-etape="briques">
+            <p class="ce-tete"><span class="ce-n">1</span><span class="ce-nom">Vos briques</span><a class="ce-lien" href="#briques" id="ce-lien">Choisir</a></p>
+            <ul class="dm-pistes" aria-hidden="true">
+              <li data-pour="le tournage">Tournage</li>
+              <li data-pour="le montage">Montage</li>
+              <li data-pour="la stratégie">Stratégie</li>
+              <li data-pour="le pilotage et le suivi">Pilotage</li>
+            </ul>
+          </li>
+          <li class="ce" data-etape="rythme">
+            <p class="ce-tete" id="titre-rythme"><span class="ce-n">2</span><span class="ce-nom">Le rythme</span></p>
+            <div class="rythmes" role="radiogroup" aria-labelledby="titre-rythme">
+              <label class="rythme"><input type="radio" name="rythme" value="une fois"><span>Une fois</span></label>
+              <label class="rythme"><input type="radio" name="rythme" value="chaque mois"><span>Chaque mois</span></label>
+              <label class="rythme"><input type="radio" name="rythme" value=""><span>On en parle</span></label>
+            </div>
+          </li>
+          <li class="ce" data-etape="appel">
+            <p class="ce-tete"><span class="ce-n">3</span><span class="ce-nom">Votre appel</span></p>
+            <a class="bouton bouton-plein aimant" href="#contact" data-lien="rdv" id="compo-rdv">Réserver mon appel de 30 min</a>
+            <p class="compo-note">Devis gratuit, sous 2&nbsp;jours ouvrés après l’appel. <a href="#contact" id="compo-mail">Ou envoyer ma demande par e-mail</a></p>
+          </li>
+        </ol>
       </div>
 
       <div class="lancement ecran" id="lancement" data-lumiere data-revele>
@@ -607,6 +620,6 @@
   <div class="marque-geante" aria-hidden="true"><span>Lances</span><span>Lances</span></div>
 </footer>
 
-<script src="/assets/js/site.js?v=2026-11-27a" defer></script>
+<script src="/assets/js/site.js?v=2026-11-27b" defer></script>
 </body>
 </html>

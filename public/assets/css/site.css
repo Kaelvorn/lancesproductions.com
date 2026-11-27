@@ -451,19 +451,37 @@ body.menu-ouvert{overflow:hidden}
 .brique-plus[aria-pressed="true"]{background:var(--parchemin);color:var(--noir);box-shadow:none}
 .brique-plus[aria-pressed="true"] i{background:linear-gradient(90deg,var(--rouge-profond),var(--rouge) 60%,var(--or))}
 .brique.choisie{box-shadow:inset 0 0 0 1px rgba(242,235,221,.5),0 30px 80px -50px rgba(0,0,0,.9)}
-.compo{padding:clamp(20px,2.4vw,30px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:18px clamp(24px,4vw,56px);align-items:center;scroll-margin-top:calc(100px + env(safe-area-inset-top,0px))}
-.compo-g,.compo-d{display:grid;gap:12px;min-width:0}
-.compo-phrase{font-family:var(--f-titre);font-weight:700;font-size:clamp(1.25rem,1rem + 1vw,1.7rem);line-height:1.15}
-.compo-phrase.vide{color:var(--gris);font-family:var(--f-texte);font-weight:400;font-size:.98rem;line-height:1.5}
-.rythmes{display:flex;flex-wrap:wrap;gap:8px}
-.rythme{position:relative;display:inline-flex;cursor:pointer}
+/* La demande en trois étapes : 1 vos briques, 2 le rythme, 3 votre appel.
+   L'étape en cours a son numéro cerclé de rouge ; une étape faite prend une coche. */
+.compo{padding:clamp(20px,2.4vw,30px);display:grid;gap:clamp(14px,1.8vw,22px);scroll-margin-top:calc(100px + env(safe-area-inset-top,0px))}
+.compo-tete{color:var(--gris)}
+.compo-etat{color:var(--parchemin-doux)}
+.compo-etapes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,2.6vw,36px)}
+.ce{display:grid;gap:12px;align-content:start;min-width:0}
+.ce-tete{display:flex;align-items:center;gap:10px;min-height:34px}
+.ce-n{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-family:var(--f-titre);font-weight:800;font-size:.86rem;line-height:1;color:var(--gris-sourd);box-shadow:inset 0 0 0 1px var(--ligne-forte);transition:background-color .3s,color .3s,box-shadow .3s}
+.ce-nom{font-family:var(--f-titre);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:1.02rem;line-height:1;color:var(--gris);transition:color .3s}
+.ce-lien{margin-left:auto;padding:6px 0;font-size:.84rem;color:var(--parchemin-doux);text-decoration:underline;text-decoration-color:var(--ligne-forte);text-underline-offset:4px}
+.ce.encours .ce-n{color:var(--parchemin);box-shadow:inset 0 0 0 1.5px var(--rouge),0 0 14px -3px rgba(240,86,42,.75)}
+.ce.encours .ce-nom,.ce.fait .ce-nom{color:var(--parchemin)}
+.ce.fait .ce-n{font-size:0;background:var(--parchemin);color:var(--noir);box-shadow:none}
+.ce.fait .ce-n::after{content:"";width:9px;height:5px;border-left:2px solid currentColor;border-bottom:2px solid currentColor;transform:translate(1px,-2px) rotate(-45deg)}
+.ce .bouton{width:100%}
+.rythmes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;box-shadow:inset 0 0 0 1px var(--ligne-forte)}
+.rythme{position:relative;display:flex;min-width:0;cursor:pointer}
 .rythme input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
-.rythme span{padding:11px 15px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--ligne-forte);font-size:.86rem;color:var(--parchemin-doux);transition:background-color .25s,color .25s}
+.rythme span{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;min-height:42px;padding:6px 4px;border-radius:10px;font-size:.84rem;line-height:1.2;color:var(--parchemin-doux);transition:background-color .25s,color .25s}
 .rythme:hover span{color:var(--parchemin)}
-.rythme input:checked + span{background:var(--parchemin);color:var(--noir);box-shadow:none}
-.rythme input:focus-visible + span{outline:2px solid var(--parchemin);outline-offset:3px}
-.compo-d .bouton{width:100%}
+.rythme input:checked + span{background:var(--parchemin);color:var(--noir)}
+.rythme input:focus-visible + span{outline:2px solid var(--parchemin);outline-offset:2px}
 .compo-note{font-size:.84rem;color:var(--gris)}
+.compo-note a{display:inline-block;margin-top:4px;color:var(--parchemin-doux);text-decoration:underline;text-decoration-color:var(--ligne-forte);text-underline-offset:4px}
+.compo-note a:hover{text-decoration-color:var(--parchemin)}
+@media (max-width:900px){
+  .compo-etapes{grid-template-columns:minmax(0,1fr);gap:0}
+  .ce{padding-block:16px;border-top:1px solid var(--ligne)}
+  .ce:last-child{padding-bottom:0}
+}
 .niv3{display:grid;gap:14px}
 .niv3-grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .niv3-grille .niveau{align-content:start}
@@ -486,28 +504,32 @@ body.menu-ouvert{overflow:hidden}
 .places i{flex:none;width:30px;height:10px;background:linear-gradient(90deg,var(--rouge-profond),var(--rouge) 60%,var(--or));clip-path:polygon(0 66%,0 100%,24% 100%,100% 0)}
 .mentions-offre{color:var(--gris-sourd);font-size:.85rem;max-width:90ch}
 @media (max-width:1100px){.briques{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:900px){.compo,.lancement{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){.lancement{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.lanc-echange{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){.lanc-rec::before{animation:none}}
 @media (max-width:600px){.briques,.niv3-grille{grid-template-columns:minmax(0,1fr)}.brique h3{font-size:1.6rem}}
 /* Téléphone et tablette : la demande en cours reste collée en haut pendant qu'on parcourt
-   les briques (comme la table de montage de la méthode), puis s'en va avec la dernière brique,
-   juste avant le cadre « Votre demande ». Ordinateur : rien, le cadre est déjà en vue. */
-.briques-zone{display:grid;gap:clamp(12px,1.6vw,22px)}
+   les briques et les trois niveaux (comme la table de montage de la méthode), puis s'efface
+   quand le cadre « Votre demande » arrive. Ordinateur : rien, le cadre est déjà en vue.
+   Les clips (.dm-pistes) servent aussi à l'étape 1 du cadre, sur tous les écrans. */
+.briques-zone{display:grid;gap:clamp(26px,3.4vw,44px)}
 .demande-mini{display:none}
 @keyframes dm-clip{from{transform:scale(.86);filter:brightness(1.7)}}
+.dm-pistes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.dm-pistes li{display:flex;align-items:center;justify-content:center;height:30px;padding:0 3px;border-radius:5px;overflow:hidden;font-family:var(--f-titre);font-weight:700;font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;color:var(--gris-sourd);background:rgba(167,179,191,.04);box-shadow:inset 0 0 0 1px rgba(167,179,191,.16);transition:box-shadow .4s,color .4s,background-color .4s}
+.dm-pistes li.on{color:var(--parchemin);background:linear-gradient(160deg,#3A2A24,#16120F);box-shadow:inset 0 0 0 1px rgba(240,86,42,.75),0 0 18px -6px rgba(240,86,42,.5)}
+.dm-pistes li.vient{animation:dm-clip .5s var(--e-sortie)}
+.ce .dm-pistes{gap:6px}
+.ce .dm-pistes li{height:40px;font-size:.7rem;border-radius:8px}
 @media (max-width:900px){
-  .demande-mini{display:grid;gap:8px;position:sticky;top:calc(94px + env(safe-area-inset-top,0px));z-index:3;padding:8px 10px 10px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--ligne),0 18px 30px -10px rgba(10,12,15,.95)}
+  .demande-mini{display:grid;gap:8px;position:sticky;top:calc(94px + env(safe-area-inset-top,0px));z-index:3;padding:8px 10px 10px;border-radius:16px;box-shadow:inset 0 0 0 1px var(--ligne),0 18px 30px -10px rgba(10,12,15,.95);transition:opacity .35s,transform .35s var(--e-sortie)}
+  .demande-mini.cache{opacity:0;transform:translateY(-12px);pointer-events:none}
   .dm-haut{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px;padding-left:2px}
   .dm-haut .hud{font-size:.6rem;color:var(--gris)}
   .dm-compte{color:var(--gris-sourd);transition:color .4s}
   .demande-mini.pleine .dm-compte{color:var(--parchemin)}
   .dm-aller{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:8px 14px;border-radius:999px;background:var(--parchemin);color:var(--noir);font-family:var(--f-titre);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;animation:monte-doux .5s var(--e-sortie)}
   .dm-aller i{width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
-  .dm-pistes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
-  .dm-pistes li{display:flex;align-items:center;justify-content:center;height:30px;padding:0 3px;border-radius:5px;overflow:hidden;font-family:var(--f-titre);font-weight:700;font-size:.62rem;letter-spacing:.04em;text-transform:uppercase;color:var(--gris-sourd);background:rgba(167,179,191,.04);box-shadow:inset 0 0 0 1px rgba(167,179,191,.16);transition:box-shadow .4s,color .4s,background-color .4s}
-  .dm-pistes li.on{color:var(--parchemin);background:linear-gradient(160deg,#3A2A24,#16120F);box-shadow:inset 0 0 0 1px rgba(240,86,42,.75),0 0 18px -6px rgba(240,86,42,.5)}
-  .dm-pistes li.vient{animation:dm-clip .5s var(--e-sortie)}
 }
 @media (max-width:359px){.dm-haut .hud{font-size:.54rem;letter-spacing:.06em}.dm-aller{padding-inline:11px}}
 
